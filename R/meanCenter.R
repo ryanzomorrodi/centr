@@ -48,8 +48,8 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
   if (!inherits(x, "sf")) {
     stop(deparse(substitute(x)), " must be an simple features object")
   }
-  if(any(!(as.character(sf::st_geometry_type(x)) %in% c("POINT", "POLYGON")))) {
-    stop(deparse(substitute(x)), " must be POINT or POLYGON geometry")
+  if(any(!(as.character(sf::st_geometry_type(x)) %in% c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))) {
+    stop(deparse(substitute(x)), " must contain only point or polygon geometries")
   }
   if(is.na(sf::st_crs(x))) {
     stop(deparse(substitute(x)), " must have a defined projection")
@@ -59,7 +59,7 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
   } else {
     if (!(weight %in% colnames(x))) {
       stop(weight, "` doesn't exist within ", deparse(substitute(x)))
-    }
+    }weight
     wts <- x[[weight]]
     if (any(is.na(wts))) {
       stop(weight, " contains at least one missing value")
@@ -68,7 +68,7 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
     }
   }
   if (is.null(group)) {
-    grps <- rep(1, nrow(x))
+    grps <- rep("a", nrow(x))
   } else {
     if (!(group %in% colnames(x))) {
       stop("Column `",  group, "` doesn't exist within ", deparse(substitute(x)))
@@ -76,8 +76,12 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
     grps <- x[[group]]
     if (any(is.na(grps))) {
       stop(group, " contains at least one missing value")
+    } else if (!is.character(grps)) {
+      stop(group, " is not a character")
     }
   }
+
+  x <- suppressWarnings(sf::st_centroid(x))
 
   unique_groups <- unique(grps)
   geometry <- vector(mode = "list", length(unique_groups))
