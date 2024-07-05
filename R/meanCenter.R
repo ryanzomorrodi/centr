@@ -63,6 +63,8 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
     wts <- x[[weight]]
     if (any(is.na(wts))) {
       stop(weight, " contains at least one missing value")
+    } else if (!is.numeric(wts)) {
+      stop(weight, " is not numeric")
     }
   }
   if (is.null(group)) {
