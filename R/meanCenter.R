@@ -44,6 +44,37 @@ planarMeanCenter <- function (x, y, wts) {
   list(x = x_mean, y = y_mean)
 }
 
+#' Mean Center
+#'
+#' @description
+#'  `meanCenter()` returns the mean center for each group within
+#'  a point or polygon simple features object.
+#' 
+#' @section Unprojected data:
+#'  If `st_is_longlat(x)`, mean center is calculated
+#'  assuming a spherical Earth. 
+#' 
+#' @section Projected data:
+#'  If `!st_is_longlat(x)`, mean center is calculated assuming a
+#' "flat" Earth.
+#' 
+#' @param x Input POINT or POLYGON simple features
+#' @param group specifies groups to calculate individual mean centers
+#'  for
+#' @param weight numeric; weight specifying an individual point's 
+#'  contribution to the mean center
+#'  
+#' 
+#' @returns An sf object with a mean center for each group
+#' @examples
+#' df <- data.frame(
+#'   lon = c(20, 50, 30, 80, 10),
+#'   lat = c(25, 70, 30, 50, 30),
+#'   grp = c("a", "b", "a", "b", "a"),
+#'   wt = c(1,5,1,3,2))
+#' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
+#' meanCenter(x, group = "grp", weight = "wt")
+#' @export
 meanCenter <- function (x, group = NULL, weight = NULL) {
   if (!inherits(x, "sf")) {
     stop(deparse(substitute(x)), " must be an simple features object")
@@ -59,7 +90,7 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
   } else {
     if (!(weight %in% colnames(x))) {
       stop(weight, "` doesn't exist within ", deparse(substitute(x)))
-    }weight
+    }
     wts <- x[[weight]]
     if (any(is.na(wts))) {
       stop(weight, " contains at least one missing value")
