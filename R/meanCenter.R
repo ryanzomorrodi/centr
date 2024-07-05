@@ -1,5 +1,4 @@
 lonLat2cartesian <- function(lon, lat) {
-
   phi <- ((90 - lat) * pi)/180
   theta <- (lon * pi)/180
 
@@ -11,7 +10,6 @@ lonLat2cartesian <- function(lon, lat) {
 }
 
 cartesian2lonLat <- function(x, y, z) {
-  
   phi <- acos(z)
   theta <- asin(y/(sin(phi)))
 
@@ -21,12 +19,12 @@ cartesian2lonLat <- function(x, y, z) {
   list(lon = lon, lat = lat)
 }
 
-cartesianMeanCenter <- function(x, y, z, wt) {
-  total <- sum(wt)
+cartesianMeanCenter <- function(x, y, z, wts) {
+  total <- sum(wts)
 
-  x_mean <- sum(x * wt)/total
-  y_mean <- sum(y * wt)/total
-  z_mean <- sum(z * wt)/total
+  x_mean <- sum(x * wts)/total
+  y_mean <- sum(y * wts)/total
+  z_mean <- sum(z * wts)/total
 
   L <- sqrt(sum((c(x_mean, y_mean, z_mean))^2))
 
@@ -35,6 +33,15 @@ cartesianMeanCenter <- function(x, y, z, wt) {
   surface_z_mean <- z_mean/L
 
   list(x = surface_x_mean, y = surface_y_mean, z = surface_z_mean)
+}
+
+planarMeanCenter <- function (x, y, wts) {
+  total <- sum(wts)
+
+  x_mean <- sum(x * wts)/total
+  y_mean <- sum(y * wts)/total
+
+  list(x = x_mean, y = y_mean)
 }
 
 meanCenter <- function (x, group = NULL, weight = NULL) {
@@ -55,6 +62,9 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
     }
     grps <- x[[group]]
   }
+  unique_groups <- unique(grps)
+  geometry <- vector(mode = "list", length(unique_groups))
+  names(geometry) <- unique_groups
 
   if (sf::st_is_longlat(x)) {
     lon <- sf::st_coordinates(x)[,1]
@@ -63,25 +73,32 @@ meanCenter <- function (x, group = NULL, weight = NULL) {
   
     centerArgs <- as.data.frame(cartesian)
     centerArgs$wt <- wts
-
     centerArgs_grped <- split(centerArgs, f = grps)
-    unique_groups <- unique(grps)
-    geometry <- vector(mode = "list", length(unique_groups))
-    names(geometry) <- unique_groups
   
     for (grp in unique_groups) {
       meansCart <- do.call(cartesianMeanCenter, centerArgs_grped[[grp]])
       meansLonLat <- do.call(cartesian2lonLat, meansCart)
       geometry[[grp]] <- sf::st_point(unlist(meansLonLat))
     }
+  } else {
+    centerArgs <- data.frame(
+      x = sf::st_coordinates(x)[,1], 
+      y = sf::st_coordinates(x)[,2],
+      wts = wts)
+    centerArgs_grped <- split(centerArgs, f = grps)
 
-    output <- sf::st_as_sf(data.frame(
-      geometry = sf::st_sfc(geometry, crs = sf::st_crs(x))
-    ))
-    if (!is.null(group)) {
-      output[[group]] = unique_groups
-      output <- output[, c(2,1)]
+    for (grp in unique_groups) {
+      meansLonLat <- do.call(planarMeanCenter, centerArgs_grped[[grp]])
+      geometry[[grp]] <- sf::st_point(unlist(meansLonLat))
     }
-    output
   }
+
+  output <- sf::st_as_sf(data.frame(
+    geometry = sf::st_sfc(geometry, crs = sf::st_crs(x))
+  ))
+  if (!is.null(group)) {
+    output[[group]] = unique_groups
+    output <- output[, c(2,1)]
+  }
+  output
 }
