@@ -45,23 +45,38 @@ planarMeanCenter <- function (x, y, wts) {
 }
 
 meanCenter <- function (x, group = NULL, weight = NULL) {
+  if (!inherits(x, "sf")) {
+    stop(deparse(substitute(x)), " must be an simple features object")
+  }
+  if(any(!(as.character(sf::st_geometry_type(x)) %in% c("POINT", "POLYGON")))) {
+    stop(deparse(substitute(x)), " must be POINT or POLYGON geometry")
+  }
+  if(is.na(sf::st_crs(x))) {
+    stop(deparse(substitute(x)), " must have a defined projection")
+  }
   if (is.null(weight)) {
     wts <- rep(1, nrow(x))
   } else {
     if (!(weight %in% colnames(x))) {
-      stop(paste0("Column `",  weight, "` doesn't exist"))
+      stop(weight, "` doesn't exist within ", deparse(substitute(x)))
     }
     wts <- x[[weight]]
+    if (any(is.na(wts))) {
+      stop(weight, " contains at least one missing value")
+    }
   }
-
   if (is.null(group)) {
     grps <- rep(1, nrow(x))
   } else {
     if (!(group %in% colnames(x))) {
-      stop(paste0("Column `",  group, "` doesn't exist"))
+      stop("Column `",  group, "` doesn't exist within ", deparse(substitute(x)))
     }
     grps <- x[[group]]
+    if (any(is.na(grps))) {
+      stop(group, " contains at least one missing value")
+    }
   }
+
   unique_groups <- unique(grps)
   geometry <- vector(mode = "list", length(unique_groups))
   names(geometry) <- unique_groups
