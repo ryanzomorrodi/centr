@@ -67,7 +67,7 @@ mean_center <- function(x, group = NULL, weight = NULL) {
     cartesian <- lonlat_cartesian(lon, lat)
     ctr_args <- as.data.frame(cartesian)
     ctr_args$wt <- wts
-    ctr_args_split <- split(centerArgs, f = grps)
+    ctr_args_split <- split(ctr_args, f = grps)
 
     for (grp in unique_grps) {
       means_cartesian <- do.call(cartesian_mean, ctr_args_split[[grp]])

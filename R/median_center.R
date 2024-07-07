@@ -12,11 +12,11 @@ planar_median_est <- function(x, y, x_t, y_t, wts) {
   list(x = x_estimate, y = y_estimate)
 }
 
-planar_median <- function(x, y, wts, tol = 0.01) {
+planar_median <- function(x, y, wts, tol = 0.0001) {
   estimate <- planar_mean(x, y, wts)
   new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
 
-  while (abs(estimate$x - new_estimate$x) > tol || abs(estimate$y - new_estimate$y) > tol) {
+  while (any(abs(unlist(estimate) - unlist(new_estimate)) > tol)) {
     estimate <- new_estimate
     new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
   }
@@ -24,9 +24,34 @@ planar_median <- function(x, y, wts, tol = 0.01) {
 }
 
 #' Median Center
-#' `median_center()` returns the Euclidean median within
-#' a specified tolerance for each group using the method
-#' developed by Kuhn and Kuenne 1962.
+#'
+#' @description
+#'  `median_center()` returns the Euclidean median within
+#'  a specified tolerance for each group using the method
+#'  developed by Kuhn and Kuenne 1962.
+#' @section Unprojected data:
+#'  If `st_is_longlat(x)`, median center is calculated
+#'  assuming a spherical Earth.
+#' @section Projected data:
+#'  If `!st_is_longlat(x)`, median center is calculated assuming
+#'  a "flat" Earth.
+#' @param x Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
+#'  simple features
+#' @param group specifies groups to calculate individual mean
+#'  centers for
+#' @param weight numeric; weight specifying an individual point's
+#'  contribution to the mean center
+#' @returns An sf object with a mean center for each group
+#' @examples
+#' df <- data.frame(
+#'   lon = c(-88, -90, -92, -89, -90),
+#'   lat = c(42, 40, 30, 32, 42),
+#'   grp = c("a", "b", "a", "b", "a"),
+#'   wt = c(1,1,1,1,1))
+#' x_sf <- sf::st_as_sf(x, coords = c("lon", "lat"), crs = 4326)
+#' x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
+#' median_center(x_transformed, group = "grp", weight = "wt")
+#' @export
 median_center <- function(x, group = NULL, weight = NULL) {
   x_name <- deparse(substitute(x))
   allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
@@ -40,7 +65,7 @@ median_center <- function(x, group = NULL, weight = NULL) {
   names(geometry) <- unique_grps
 
   if (sf::st_is_longlat(x)) {
-    stop("Median centroid for unprojected data has not been implemented")
+    stop(xname, " projection is not defined")
   } else {
     ctr_args <- data.frame(
       x = sf::st_coordinates(x)[, 1],
