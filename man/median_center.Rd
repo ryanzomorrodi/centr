@@ -26,7 +26,7 @@ individual centers for and weights for each individual point. It
 is analagous to the \href{https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm}{ArcGIS Pro Median Center}
 tool.
 
-It uses the \href{https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-median-center-spatial-statistics-works.htm}{methodology}
+It uses the \href{https://doi.org/10.1111/j.1467-9787.1962.tb00902.x}{methodology}
 introduced by Kuhn and Kuenne (1962).
 
 Currently, median center is only implemenented for projected data.

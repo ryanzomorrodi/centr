@@ -32,7 +32,7 @@ planar_median <- function(x, y, wts, tol = 0.0001) {
 #' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm) 
 #' tool.
 #' 
-#' It uses the [methodology](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-median-center-spatial-statistics-works.htm) 
+#' It uses the [methodology](https://doi.org/10.1111/j.1467-9787.1962.tb00902.x) 
 #' introduced by Kuhn and Kuenne (1962).
 #' 
 #' Currently, median center is only implemenented for projected data.
