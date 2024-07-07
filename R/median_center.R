@@ -26,15 +26,16 @@ planar_median <- function(x, y, wts, tol = 0.0001) {
 #' Median Center
 #'
 #' @description
-#'  `median_center()` returns the Euclidean median within
-#'  a specified tolerance for each group using the method
-#'  developed by Kuhn and Kuenne 1962.
-#' @section Unprojected data:
-#'  If `st_is_longlat(x)`, median center is calculated
-#'  assuming a spherical Earth.
-#' @section Projected data:
-#'  If `!st_is_longlat(x)`, median center is calculated assuming
-#'  a "flat" Earth.
+#' Median center iteratively calculates the point that minimizes
+#' distance to all features. One can specify the groups to calculate
+#' individual centers for and weights for each individual point. It
+#' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm) 
+#' tool.
+#' 
+#' It uses the [methodology](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/h-how-median-center-spatial-statistics-works.htm) 
+#' introduced by Kuhn and Kuenne (1962).
+#' 
+#' Currently, median center is only implemenented for projected data.
 #' @param x Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
 #'  simple features
 #' @param group specifies groups to calculate individual mean

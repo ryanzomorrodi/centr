@@ -1,9 +1,9 @@
 Package: centr
-Title: What the Package Does (One Line, Title Case)
+Title: A Package For Weighted and Unweighted Spatial Centers
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Ryan", "Zomorrodi", , "rzomor2@uic.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0003-6417-5985"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -11,4 +11,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     sf
-URL: https://ryanzomorrodi.github.io/centR/
+URL: https://ryanzomorrodi.github.io/centr/

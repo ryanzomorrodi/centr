@@ -26,13 +26,14 @@ planar_mean <- function(x, y, wts) {
 #' Mean Center
 #'
 #' @description
-#'  `mean_center()` returns the mean center for each group within
-#'  a point or polygon simple features object.
-#' @section Unprojected data:
-#'  If `st_is_longlat(x)`, mean center is calculated
-#'  assuming a spherical Earth.
-#' @section Projected data:
-#'  If `!st_is_longlat(x)`, mean center is calculated assuming a
+#' Mean center calculates the geographic average center.
+#' One can specify the groups to calculate individual centers
+#' for groups and weights for each individual point. It is
+#' analagous to the [ArcGIS Pro Mean Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/mean-center.htm)
+#' tool. 
+#' 
+#' If `st_is_longlat(x)`, mean center is calculated assuming a 
+#' spherical Earth. Projected data is calculated assuming a 
 #' "flat" Earth.
 #' @param x Input POINT or POLYGON simple features
 #' @param group specifies groups to calculate individual mean centers
