@@ -29,12 +29,12 @@ planar_median <- function(x, y, wts, tol = 0.0001) {
 #' Median center iteratively calculates the point that minimizes
 #' distance to all features. One can specify the groups to calculate
 #' individual centers for and weights for each individual point. It
-#' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm) 
+#' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm)
 #' tool.
-#' 
-#' It uses the [methodology](https://doi.org/10.1111/j.1467-9787.1962.tb00902.x) 
+#'
+#' It uses the [methodology](https://doi.org/10.1111/j.1467-9787.1962.tb00902.x)
 #' introduced by Kuhn and Kuenne (1962).
-#' 
+#'
 #' Currently, median center is only implemenented for projected data.
 #' @param x Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
 #'  simple features
@@ -48,8 +48,9 @@ planar_median <- function(x, y, wts, tol = 0.0001) {
 #'   lon = c(-88, -90, -92, -89, -90),
 #'   lat = c(42, 40, 30, 32, 42),
 #'   grp = c("a", "b", "a", "b", "a"),
-#'   wt = c(1,1,1,1,1))
-#' x_sf <- sf::st_as_sf(x, coords = c("lon", "lat"), crs = 4326)
+#'   wt = c(1, 1, 1, 1, 1)
+#' )
+#' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
 #' median_center(x_transformed, group = "grp", weight = "wt")
 #' @export
@@ -66,12 +67,13 @@ median_center <- function(x, group = NULL, weight = NULL) {
   names(geometry) <- unique_grps
 
   if (sf::st_is_longlat(x)) {
-    stop(xname, " projection is not defined")
+    stop(x_name, " projection is not defined")
   } else {
     ctr_args <- data.frame(
       x = sf::st_coordinates(x)[, 1],
       y = sf::st_coordinates(x)[, 2],
-      wts = wts)
+      wts = wts
+    )
     ctr_args_split <- split(ctr_args, f = grps)
 
     for (grp in unique_grps) {

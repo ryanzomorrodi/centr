@@ -53,7 +53,7 @@ group_checks <- function(x, x_name, group) {
     rep("a", nrow(x))
   } else {
     if (!(group %in% colnames(x))) {
-      stop("Column `",  group, "` doesn't exist within ", x_name)
+      stop("Column `", group, "` doesn't exist within ", x_name)
     }
     if (any(is.na(x[[group]]))) {
       stop(group, " contains at least one missing value")

@@ -30,10 +30,10 @@ planar_mean <- function(x, y, wts) {
 #' One can specify the groups to calculate individual centers
 #' for groups and weights for each individual point. It is
 #' analagous to the [ArcGIS Pro Mean Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/mean-center.htm)
-#' tool. 
-#' 
-#' If `st_is_longlat(x)`, mean center is calculated assuming a 
-#' spherical Earth. Projected data is calculated assuming a 
+#' tool.
+#'
+#' If `st_is_longlat(x)`, mean center is calculated assuming a
+#' spherical Earth. Projected data is calculated assuming a
 #' "flat" Earth.
 #' @param x Input POINT or POLYGON simple features
 #' @param group specifies groups to calculate individual mean centers
@@ -46,7 +46,8 @@ planar_mean <- function(x, y, wts) {
 #'   lon = c(20, 50, 30, 80, 10),
 #'   lat = c(25, 70, 30, 50, 30),
 #'   grp = c("a", "b", "a", "b", "a"),
-#'   wt = c(1,5,1,3,2))
+#'   wt = c(1, 5, 1, 3, 2)
+#' )
 #' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' mean_center(x, group = "grp", weight = "wt")
 #' @export
@@ -79,8 +80,9 @@ mean_center <- function(x, group = NULL, weight = NULL) {
     ctr_args <- data.frame(
       x = sf::st_coordinates(x)[, 1],
       y = sf::st_coordinates(x)[, 2],
-      wts = wts)
-      ctr_args_split <- split(ctr_args, f = grps)
+      wts = wts
+    )
+    ctr_args_split <- split(ctr_args, f = grps)
 
     for (grp in unique_grps) {
       mean_xy <- do.call(planar_mean, ctr_args_split[[grp]])

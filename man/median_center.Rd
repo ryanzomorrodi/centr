@@ -36,8 +36,9 @@ df <- data.frame(
   lon = c(-88, -90, -92, -89, -90),
   lat = c(42, 40, 30, 32, 42),
   grp = c("a", "b", "a", "b", "a"),
-  wt = c(1,1,1,1,1))
-x_sf <- sf::st_as_sf(x, coords = c("lon", "lat"), crs = 4326)
+  wt = c(1, 1, 1, 1, 1)
+)
+x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
 median_center(x_transformed, group = "grp", weight = "wt")
 }
