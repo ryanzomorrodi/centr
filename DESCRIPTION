@@ -12,3 +12,6 @@ RoxygenNote: 7.3.2
 Imports: 
     sf
 URL: https://ryanzomorrodi.github.io/centr/
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
