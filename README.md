@@ -4,6 +4,8 @@
 # centr
 
 <!-- badges: start -->
+
+[![codecov](https://codecov.io/github/ryanzomorrodi/centr/graph/badge.svg?token=TTGPNPXV8Z)](https://codecov.io/github/ryanzomorrodi/centr)
 <!-- badges: end -->
 
 A Package For Weighted and Unweighted Spatial Centers
