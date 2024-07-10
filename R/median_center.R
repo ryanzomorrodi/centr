@@ -12,7 +12,7 @@ planar_median_est <- function(x, y, x_t, y_t, wts) {
   list(x = x_estimate, y = y_estimate)
 }
 
-planar_median <- function(x, y, wts, tol = 0.0001) {
+planar_median <- function(x, y, wts, tol) {
   estimate <- planar_mean(x, y, wts)
   new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
 
@@ -54,7 +54,7 @@ planar_median <- function(x, y, wts, tol = 0.0001) {
 #' x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
 #' median_center(x_transformed, group = "grp", weight = "wt")
 #' @export
-median_center <- function(x, group = NULL, weight = NULL) {
+median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   x_name <- deparse(substitute(x))
   allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
@@ -74,10 +74,12 @@ median_center <- function(x, group = NULL, weight = NULL) {
       y = sf::st_coordinates(x)[, 2],
       wts = wts
     )
+
     ctr_args_split <- split(ctr_args, f = grps)
+    planar_mean_w_tol <- \(x, y, wts) planar_median(x, y, wts, tol = tolerance)
 
     for (grp in unique_grps) {
-      mean_xy <- do.call(planar_median, ctr_args_split[[grp]])
+      mean_xy <- do.call(planar_mean_w_tol, ctr_args_split[[grp]])
       geometry[[grp]] <- sf::st_point(unlist(mean_xy))
     }
   }
