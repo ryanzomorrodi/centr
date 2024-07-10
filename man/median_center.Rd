@@ -4,17 +4,21 @@
 \alias{median_center}
 \title{Median Center}
 \usage{
-median_center(x, group = NULL, weight = NULL)
+median_center(x, group = NULL, weight = NULL, tolerance = 1e-04)
 }
 \arguments{
 \item{x}{Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
 simple features}
 
-\item{group}{specifies groups to calculate individual mean
-centers for}
+\item{group}{name of character column specifying groups
+to calculate individual median centers for}
 
-\item{weight}{numeric; weight specifying an individual point's
-contribution to the mean center}
+\item{weight}{name of numeric weight column specifying an
+individual point's contribution to the median center}
+
+\item{tolerance}{numeric threshold determining when an
+estimate improvement is sufficiently small enough to stop
+iterating (smaller = slower, but more precision)}
 }
 \value{
 An sf object with a mean center for each group

@@ -38,10 +38,13 @@ planar_median <- function(x, y, wts, tol) {
 #' Currently, median center is only implemenented for projected data.
 #' @param x Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
 #'  simple features
-#' @param group specifies groups to calculate individual mean
-#'  centers for
-#' @param weight numeric; weight specifying an individual point's
-#'  contribution to the mean center
+#' @param group name of character column specifying groups 
+#'  to calculate individual median centers for
+#' @param weight name of numeric weight column specifying an 
+#'  individual point's contribution to the median center
+#' @param tolerance numeric threshold determining when an 
+#'  estimate improvement is sufficiently small enough to stop 
+#'  iterating (smaller = slower, but more precision)
 #' @returns An sf object with a mean center for each group
 #' @examples
 #' df <- data.frame(

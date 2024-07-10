@@ -9,11 +9,11 @@ mean_center(x, group = NULL, weight = NULL)
 \arguments{
 \item{x}{Input POINT or POLYGON simple features}
 
-\item{group}{specifies groups to calculate individual mean centers
-for}
+\item{group}{name of character column specifying groups
+to calculate individual mean centers for}
 
-\item{weight}{numeric; weight specifying an individual point's
-contribution to the mean center}
+\item{weight}{name of numeric weight column specifying an
+individual point's contribution to the mean center}
 }
 \value{
 An sf object with a mean center for each group
