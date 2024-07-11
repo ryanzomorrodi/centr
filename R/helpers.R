@@ -11,8 +11,8 @@ lonlat_cartesian <- function(lon, lat) {
 
 cartesian_lonlat <- function(x, y, z) {
   lat <- 90 - ((180 * acos(z)) / pi)
-  lon <- 
-    ifelse(x > 0 ,
+  lon <-
+    ifelse(x > 0,
       atan(y / x) * (180 / pi),
     ifelse(y > 0,
       atan(y / x) * (180 / pi) + 180,
@@ -26,7 +26,8 @@ x_checks <- function(x, x_name, allowed_geom) {
     stop(x_name, " must be an simple features object")
   }
   if (any(!(as.character(sf::st_geometry_type(x)) %in% allowed_geom))) {
-    stop(x_name, " must contain only point or polygon geometries") # probably should make more extendable
+    # probably should make more extendable
+    stop(x_name, " must contain only point or polygon geometries")
   }
   if (is.na(sf::st_crs(x))) {
     stop(x_name, " must have a defined projection")

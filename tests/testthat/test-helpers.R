@@ -6,7 +6,7 @@ test_that("lonlat cartesian conversions", {
 
   "convert back and forth"
   expect_equal(
-    do.call(cartesian_lonlat, lonlat_cartesian(lon, lat)),  
+    do.call(cartesian_lonlat, lonlat_cartesian(lon, lat)),
     list(lon = lon, lat = lat)
   )
 })
