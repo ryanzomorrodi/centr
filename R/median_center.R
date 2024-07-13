@@ -32,8 +32,7 @@ planar_median <- function(x, y, wts, tol) {
 #' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm)
 #' tool.
 #'
-#' It uses the [methodology](https://doi.org/10.1111/j.1467-9787.1962.tb00902.x)
-#' introduced by Kuhn and Kuenne (1962).
+#' It uses the methodology introduced by Kuhn and Kuenne (1962).
 #'
 #' Currently, median center is only implemenented for projected data.
 #' @param x Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
@@ -45,7 +44,7 @@ planar_median <- function(x, y, wts, tol) {
 #' @param tolerance numeric threshold determining when an
 #'  estimate improvement is sufficiently small enough to stop
 #'  iterating (smaller = slower, but more precision)
-#' @returns An sf object with a mean center for each group
+#' @returns An sf object with a median center for each group
 #' @examples
 #' df <- data.frame(
 #'   lon = c(-88, -90, -92, -89, -90),

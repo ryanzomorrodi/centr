@@ -5,17 +5,19 @@
 
 <!-- badges: start -->
 
-[![codecov](https://codecov.io/github/ryanzomorrodi/centr/graph/badge.svg?token=TTGPNPXV8Z)](https://codecov.io/github/ryanzomorrodi/centr)
+[![codecov](https://codecov.io/github/ryanzomorrodi/centr/graph/badge.svg)](https://app.codecov.io/github/ryanzomorrodi/centr)
+[![R-CMD-check](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 A Package For Weighted and Unweighted Spatial Centers
 
 ## Installation
 
-You can install the development version of centr from
-[GitHub](https://github.com/) with:
-
 ``` r
+# Install centr from CRAN
+install.packages("centr")
+
+# Or the development version from GitHub:
 # install.packages("devtools")
 devtools::install_github("ryanzomorrodi/centr")
 ```

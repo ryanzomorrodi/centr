@@ -21,7 +21,7 @@ estimate improvement is sufficiently small enough to stop
 iterating (smaller = slower, but more precision)}
 }
 \value{
-An sf object with a mean center for each group
+An sf object with a median center for each group
 }
 \description{
 Median center iteratively calculates the point that minimizes
@@ -30,8 +30,7 @@ individual centers for and weights for each individual point. It
 is analagous to the \href{https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm}{ArcGIS Pro Median Center}
 tool.
 
-It uses the \href{https://doi.org/10.1111/j.1467-9787.1962.tb00902.x}{methodology}
-introduced by Kuhn and Kuenne (1962).
+It uses the methodology introduced by Kuhn and Kuenne (1962).
 
 Currently, median center is only implemenented for projected data.
 }
