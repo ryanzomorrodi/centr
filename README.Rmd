@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/ryanzomorrodi/centR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ryanzomorrodi/centR?branch=main)
 <!-- badges: end -->
 
-A Package For Weighted and Unweighted Spatial Centers
+A Package for Weighted and Unweighted Spatial Centers
 
 ## Installation
 

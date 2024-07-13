@@ -6,10 +6,11 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/ryanzomorrodi/centR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ryanzomorrodi/centR?branch=main)
+[![Codecov test
+coverage](https://codecov.io/gh/ryanzomorrodi/centR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ryanzomorrodi/centR?branch=main)
 <!-- badges: end -->
 
-A Package For Weighted and Unweighted Spatial Centers
+A Package for Weighted and Unweighted Spatial Centers
 
 ## Installation
 
