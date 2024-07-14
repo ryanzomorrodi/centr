@@ -1,5 +1,5 @@
 Package: centr
-Title: A Package for Weighted and Unweighted Spatial Centers"
+Title: A Package for Weighted and Unweighted Spatial Centers
 Version: 0.1.0
 Authors@R: 
     person("Ryan", "Zomorrodi", , "rzomor2@uic.edu", role = c("aut", "cre", "cph"),
