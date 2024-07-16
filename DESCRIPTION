@@ -1,10 +1,10 @@
 Package: centr
-Title: A Package for Weighted and Unweighted Spatial Centers
+Title: Weighted and Unweighted Spatial Centers
 Version: 0.1.0
 Authors@R: 
     person("Ryan", "Zomorrodi", , "rzomor2@uic.edu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0009-0003-6417-5985"))
-Description: Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro.
+Description: Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within 'ArcGIS Pro'.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
