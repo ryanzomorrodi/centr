@@ -7,7 +7,7 @@ test_that("lonlat cartesian conversions", {
   "convert back and forth"
   expect_equal(
     do.call(cartesian_lonlat, lonlat_cartesian(lon, lat)),
-    list(lon = lon, lat = lat)
+    list(x = lon, y = lat)
   )
 })
 
@@ -38,13 +38,23 @@ test_that("weight checks", {
   "non numeric column"
   expect_error(weight_checks(x, "x", "grp"))
 
+  "missing value"
+  x_missing_wt <- x
+  x_missing_wt$wts[10] <- NA_real_
+  expect_error(weight_checks(x_missing_wt, "x", "wts"))
+
+  "negative value"
+  x_neg_wt <- x
+  x_neg_wt$wts[10] <- -1
+  expect_error(weight_checks(x_neg_wt, "x", "wts"))
+
   "existent column"
   expect_equal(weight_checks(x, "x", "wts"), x$wts)
 })
 
 test_that("group checks", {
   "NULL group"
-  expect_equal(group_checks(x, "x", NULL), rep("a", nrow(x)))
+  expect_equal(group_checks(x, "x", NULL), rep("1", nrow(x)))
 
   "non existent column"
   expect_error(group_checks(x, "x", "random"))

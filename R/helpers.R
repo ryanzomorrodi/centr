@@ -1,12 +1,12 @@
-lonlat_cartesian <- function(lon, lat) {
-  phi <- ((90 - lat) * pi) / 180
-  theta <- (lon * pi) / 180
+lonlat_cartesian <- function(x, y) {
+  phi <- ((90 - y) * pi) / 180
+  theta <- (x * pi) / 180
 
-  x <- sin(phi) * cos(theta)
-  y <- sin(phi) * sin(theta)
-  z <- cos(phi)
+  x_cart <- sin(phi) * cos(theta)
+  y_cart <- sin(phi) * sin(theta)
+  z_cart <- cos(phi)
 
-  list(x = x, y = y, z = z)
+  list(x = x_cart, y = y_cart, z = z_cart)
 }
 
 cartesian_lonlat <- function(x, y, z) {
@@ -18,7 +18,7 @@ cartesian_lonlat <- function(x, y, z) {
       atan(y / x) * (180 / pi) + 180,
       atan(y / x) * (180 / pi) - 180))
 
-  list(lon = lon, lat = lat)
+  list(x = lon, y = lat)
 }
 
 x_checks <- function(x, x_name, allowed_geom) {
@@ -42,10 +42,12 @@ weight_checks <- function(x, x_name, weight) {
     if (!(weight %in% colnames(x))) {
       stop(weight, "` doesn't exist within ", x_name)
     }
-    if (any(is.na(x[[weight]]))) {
-      stop(weight, " contains at least one missing value")
-    } else if (!is.numeric(x[[weight]])) {
+    if (!is.numeric(x[[weight]])) {
       stop(weight, " is not numeric")
+    } else if (any(is.na(x[[weight]]))) {
+      stop(weight, " contains at least one missing value")
+    } else if (any(x[[weight]] < 0)) {
+      stop(weight, " contains at least one negative value")
     }
     x[[weight]]
   }
@@ -53,7 +55,7 @@ weight_checks <- function(x, x_name, weight) {
 
 group_checks <- function(x, x_name, group) {
   if (is.null(group)) {
-    rep("a", nrow(x))
+    rep("1", nrow(x))
   } else {
     if (!(group %in% colnames(x))) {
       stop("Column `", group, "` doesn't exist within ", x_name)
@@ -65,4 +67,20 @@ group_checks <- function(x, x_name, group) {
     }
     x[[group]]
   }
+}
+
+# simplified version of purrr function (depreciated)
+when <- function(.x, .p, .f, ...) {
+  if (!.p) {
+    return(.x)
+  }
+  .f(..., .x)
+}
+
+# simplified version of tibble function
+rownames_to_column <- function(x, colname) {
+  x <- cbind(rownames(x), x)
+  colnames(x)[1] <- colname
+  rownames(x) <- NULL
+  x
 }

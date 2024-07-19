@@ -13,6 +13,10 @@ planar_median_est <- function(x, y, x_t, y_t, wts) {
 }
 
 planar_median <- function(x, y, wts, tol) {
+  if (all(wts == 0)) {
+    return(list(x = NA_real_, y = NA_real_))
+  }
+
   estimate <- planar_mean(x, y, wts)
   new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
 
@@ -58,40 +62,36 @@ planar_median <- function(x, y, wts, tol) {
 #' @export
 median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   x_name <- deparse(substitute(x))
+  x_is_lonlat <- sf::st_is_longlat(x)
   allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
   x <- x_checks(x, x_name, allowed_geom)
   grps <- group_checks(x, x_name, group)
   wts <- weight_checks(x, x_name, weight)
 
-  unique_grps <- unique(grps)
-  geometry <- vector(mode = "list", length(unique_grps))
-  names(geometry) <- unique_grps
-
-  if (sf::st_is_longlat(x)) {
+  if (x_is_lonlat) {
     stop(x_name, " projection is not defined")
-  } else {
-    ctr_args <- data.frame(
-      x = sf::st_coordinates(x)[, 1],
-      y = sf::st_coordinates(x)[, 2],
-      wts = wts
-    )
+  }
+  coords <- sf::st_coordinates(x) |>
+    as.data.frame() |> as.list()
+  names(coords) <- c("x", "y")
 
-    ctr_args_split <- split(ctr_args, f = grps)
-    planar_mean_w_tol <- \(x, y, wts) planar_median(x, y, wts, tol = tolerance)
+  x_split <- coords |>
+    c(wts = list(wts)) |>
+    do.call(what = data.frame) |>
+    split(factor(grps, unique(grps)))
 
-    for (grp in unique_grps) {
-      mean_xy <- do.call(planar_mean_w_tol, ctr_args_split[[grp]])
-      geometry[[grp]] <- sf::st_point(unlist(mean_xy))
-    }
+  centers <- x_split |>
+    lapply(\(x) do.call(planar_median, c(x, tolerance))) 
+
+  output <- do.call(centers, what = rbind) |>
+    as.data.frame() |>
+    when(!is.null(group), rownames_to_column, colname = group) |>
+    sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(x), na.fail = FALSE)
+
+  if (any(sf::st_is_empty(output))) {
+    warning("Empty point returned for groups with zero total weight")
   }
 
-  output <- sf::st_as_sf(data.frame(
-    geometry = sf::st_sfc(geometry, crs = sf::st_crs(x))
-  ))
-  if (!is.null(group)) {
-    output[[group]] <- unique_grps
-    output <- output[, c(2, 1)]
-  }
   output
 }
