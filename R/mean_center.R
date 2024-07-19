@@ -84,7 +84,7 @@ mean_center <- function(x, group = NULL, weight = NULL) {
       lapply(\(x) do.call(cartesian_lonlat, x))
   } else {
     centers <- x_split |>
-      lapply(\(x) do.call(planar_mean, x)) 
+      lapply(\(x) do.call(planar_mean, x))
   }
 
   output <- do.call(centers, what = rbind) |>

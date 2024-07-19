@@ -82,7 +82,7 @@ median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
     split(factor(grps, unique(grps)))
 
   centers <- x_split |>
-    lapply(\(x) do.call(planar_median, c(x, tolerance))) 
+    lapply(\(x) do.call(planar_median, c(x, tolerance)))
 
   output <- do.call(centers, what = rbind) |>
     as.data.frame() |>

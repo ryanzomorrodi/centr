@@ -24,7 +24,7 @@ x_grp <- do.call("c", lapply(unique(x$grp),
 ))
 x_grp_proj <- sf::st_transform(x_grp, crs = "ESRI:102003")
 
-x_rep_grp <- do.call("c", lapply(unique(x_rep$grp), 
+x_rep_grp <- do.call("c", lapply(unique(x_rep$grp),
   function(grp) {
     sf::st_union(x_rep[x_rep$grp == grp, ])
   }
