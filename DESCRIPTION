@@ -4,7 +4,10 @@ Version: 0.1.0
 Authors@R: 
     person("Ryan", "Zomorrodi", , "rzomor2@uic.edu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0009-0003-6417-5985"))
-Description: Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within 'ArcGIS Pro'. Median center methodology based off of Kuhn and Kuenne (1962) <doi:10.1111/j.1467-9787.1962.tb00902.x>.
+Description: Generate mean and median weighted or unweighted spatial centers. 
+    Functions are analogous to their identically named counterparts within 
+    'ArcGIS Pro'. Median center methodology based off of Kuhn and Kuenne 
+    (1962) <doi:10.1111/j.1467-9787.1962.tb00902.x>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
