@@ -92,6 +92,9 @@ median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   if (any(sf::st_is_empty(output))) {
     warning("Empty point returned for groups with zero total weight")
   }
+  if (inherits(x, "tbl_df")) {
+    class(output) <- c("sf", "tbl_df", "tbl", "data.frame")
+  }
 
   output
 }
