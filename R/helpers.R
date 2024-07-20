@@ -32,6 +32,9 @@ x_checks <- function(x, x_name, allowed_geom) {
   if (is.na(sf::st_crs(x))) {
     stop(x_name, " must have a defined projection")
   }
+  if (any(sf::st_is_empty(x))) {
+    stop(x_name, " contains empty geometries")
+  }
   suppressWarnings(sf::st_centroid(x))
 }
 
