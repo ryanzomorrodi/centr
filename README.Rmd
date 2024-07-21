@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 # centr
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/centr)](https://CRAN.R-project.org/package=centr)
+[![centr status badge](https://ryanzomorrodi.r-universe.dev/badges/centr)](https://ryanzomorrodi.r-universe.dev/centr)
 [![R-CMD-check](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ryanzomorrodi/centR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/ryanzomorrodi/centR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ryanzomorrodi/centR?branch=main)
 <!-- badges: end -->
