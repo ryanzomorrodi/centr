@@ -1,28 +1,31 @@
-euclid_xy_dist <- function(x, y, x_t, y_t) {
-  sqrt((x - x_t)^2 + (y - y_t)^2)
+euclid_xy_dist <- function(X, Y, X_t, Y_t) {
+  sqrt((X - X_t)^2 + (Y - Y_t)^2)
 }
 
-planar_median_est <- function(x, y, x_t, y_t, wts) {
-  d_t <- euclid_xy_dist(x, y, x_t, y_t)
+planar_median_est <- function(X, Y, X_t, Y_t, wts = NULL) {
+  d_t <- euclid_xy_dist(X, Y, X_t, Y_t)
   k_t <- wts / d_t
 
-  x_estimate <- sum(k_t * x) / sum(k_t)
-  y_estimate <- sum(k_t * y) / sum(k_t)
+  x_estimate <- sum(k_t * X) / sum(k_t)
+  y_estimate <- sum(k_t * Y) / sum(k_t)
 
-  list(x = x_estimate, y = y_estimate)
+  list(X = x_estimate, Y = y_estimate)
 }
 
-planar_median <- function(x, y, wts, tol) {
-  if (all(wts == 0)) {
+planar_median <- function(X, Y, tol, wts = NULL) {
+  if (is.null(wts)) {
+    wts <- rep(1, length(X))
+  } else if (sum(wts) == 0) {
+    warning("Empty point returned for groups with zero total weight")
     return(list(x = NA_real_, y = NA_real_))
   }
 
-  estimate <- planar_mean(x, y, wts)
-  new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
+  estimate <- planar_mean(X, Y, wts)
+  new_estimate <- planar_median_est(X, Y, estimate$X, estimate$Y, wts)
 
   while (any(abs(unlist(estimate) - unlist(new_estimate)) > tol)) {
     estimate <- new_estimate
-    new_estimate <- planar_median_est(x, y, estimate$x, estimate$y, wts)
+    new_estimate <- planar_median_est(X, Y, estimate$X, estimate$Y, wts)
   }
   new_estimate
 }
@@ -62,39 +65,21 @@ planar_median <- function(x, y, wts, tol) {
 #' @export
 median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   x_name <- deparse(substitute(x))
-  x_is_lonlat <- sf::st_is_longlat(x)
+  is_lonlat <- sf::st_is_longlat(x)
   allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x <- x_checks(x, x_name, allowed_geom)
-  grps <- group_checks(x, x_name, group)
-  wts <- weight_checks(x, x_name, weight)
-
-  if (x_is_lonlat) {
-    stop(x_name, " projection is not defined")
+  x_checks(x, x_name, allowed_geom)
+  if (is_lonlat) {
+    stop("`", x_name, "` does not have a defined projection")
   }
-  coords <- sf::st_coordinates(x) |>
-    as.data.frame() |> as.list()
-  names(coords) <- c("x", "y")
 
-  x_split <- coords |>
-    c(wts = list(wts)) |>
-    do.call(what = data.frame) |>
-    split(factor(grps, unique(grps)))
+  group_checks(x, x_name, group)
+  weight_checks(x, x_name, weight)
 
-  centers <- x_split |>
+  x_processed <- x_processing(x, is_lonlat, group, weight)
+
+  centers <- x_processed |>
     lapply(\(x) do.call(planar_median, c(x, tolerance)))
 
-  output <- do.call(centers, what = rbind) |>
-    as.data.frame() |>
-    when(!is.null(group), rownames_to_column, colname = group) |>
-    sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(x), na.fail = FALSE)
-
-  if (any(sf::st_is_empty(output))) {
-    warning("Empty point returned for groups with zero total weight")
-  }
-  if (inherits(x, "tbl_df")) {
-    class(output) <- c("sf", "tbl_df", "tbl", "data.frame")
-  }
-
-  output
+  output_processing(centers, x, group)
 }

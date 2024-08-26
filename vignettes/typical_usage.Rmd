@@ -1,0 +1,77 @@
+---
+title: "Typical Usage"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Typical Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This package was designed to be used to easily calculate population weighted centroids within R. While there are many scenarios in which you may require a weighted centroid, I present the following as an typical workflow for my usage.
+
+For this example we are going to be calculating the population weighted centroids for North Carolina counties. As such, we require population and geographic data at a more granular geographic classification. We will use tracts. 
+
+## Downloading Data
+We can download census population estimates and geographic layer files using the ever convenient `tidycensus` package. `sf` also has a North Carolina counties file, which we will use later, but you can always download census geometries directly from the census using `tigris`.
+```{r setup}
+library(centr)
+library(sf)
+library(tidycensus)
+
+NC_tracts <- get_decennial("tract", state = "NC", "P1_001N", year = 2020, geometry = TRUE)
+NC_counties <- st_read(system.file("shape/nc.shp", package = "sf")) 
+```
+
+## Setting Up
+We will need fields that tells us what county each tract is in and how many people live within each tract. Thankfully, the first 5 digits of the GEOID, uniquely identify the county a tract is in, which means that we can easily create a new field with this ID. The value field also gives us our weights.
+```{r}
+NC_tracts <- NC_tracts |>
+  transform(GEOID_county = substring(GEOID, 1, 5)) |>
+  subset(select = c(GEOID_county, value))
+```
+
+Let's use `mean_center()` to get our county geometries!
+```{r, error = TRUE}
+mean_center(NC_tracts, group = "GEOID_county", weight = "value")
+```
+
+## Calculation Mean Centers
+Oh, it looks like we forgot one thing. At least one of our tracts has an empty geometry. Before running `mean_center()`, we must filter out empty geometries. 
+```{r}
+NC_tracts <- subset(NC_tracts, !st_is_empty(NC_tracts))
+```
+
+Now, we can proceed.
+```{r}
+NC_county_means <- mean_center(NC_tracts, group = "GEOID_county", weight = "value")
+NC_county_means
+```
+
+Let's see how it looks.
+```{r}
+plot(st_geometry(NC_counties))
+plot(st_geometry(NC_county_means), pch = 20, cex = 1, col = "red", add = TRUE)
+```
+
+## Calculating Median Centers
+We can also calculate median centers, which is the point that minimizes distance to all geometries. `median_center()` only supports projected coordinates, so let's project to the North Carolina state plane.
+```{r}
+NC_tracts |>
+  st_transform(32119) |>
+  median_center(group = "GEOID_county", weight = "value")
+```
+
+Let's see how it looks.
+```{r}
+plot(st_geometry(NC_counties))
+plot(st_geometry(NC_county_means), pch = 20, cex = 1, col = "red", add = TRUE)
+```
+
+And that's the whole game, so go out and try it for yourself!

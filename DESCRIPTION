@@ -16,6 +16,12 @@ Imports:
     sf
 URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centR
 Suggests: 
-    testthat (>= 3.0.0)
+    data.table,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    tibble,
+    tidycensus
 Config/testthat/edition: 3
 BugReports: https://github.com/ryanzomorrodi/centR/issues
+VignetteBuilder: knitr

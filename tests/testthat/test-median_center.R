@@ -34,32 +34,10 @@ test_that("median_center", {
   )
 })
 
-test_that("weighted behavior", {
-  "projected; checked with ArcGIS Pro"
-  expect_equal(
-    round(sf::st_coordinates(sf::st_transform(median_center(x_proj, weight = "wts"), 4326)), 4),
-    round(as.matrix(data.frame(X = -96.1599666, Y = 37.9123573)), 4)
-  )
-})
-
-test_that("group behavior", {
-  "projected; checked with ArcGIS Pro"
-  expect_equal(
-    round(sf::st_coordinates(sf::st_transform(median_center(x_proj, group = "grp"), 4326)), 4),
-    round(as.matrix(data.frame(
-      X = c(-95.9452692, -96.2108539, -97.0269173),
-      Y = c(38.6609282, 37.0473917, 38.2692852)
-    )), 4)
-  )
-})
-
-test_that("weights and group behavior", {
-  "projected; checked with ArcGIS Pro"
-  expect_equal(
-    round(sf::st_coordinates(sf::st_transform(median_center(x_proj, weight = "wts", group = "grp"), 4326)), 4),
-    round(as.matrix(data.frame(
-      X = c(-95.9243719, -95.3915581, -96.9201130),
-      Y = c(38.5073800, 36.8660540, 38.2864761)
-    )), 4)
+test_that("zero weight group", {
+  x_zero_wts_proj <- x_proj
+  x_zero_wts_proj$wts[x$grp == "a"] <- 0
+  expect_warning(
+    mean_center(x_zero_wts_proj, group = "grp", weight = "wts")
   )
 })

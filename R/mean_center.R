@@ -1,13 +1,22 @@
-cartesian_mean <- function(x, y, z, wts) {
-  if (all(wts == 0)) {
-    return(list(x = NA_real_, y = NA_real_, z = NA_real_))
+cartesian_mean <- function(x, y, z, wts = NULL) {
+  if (is.null(wts)) {
+    total <- length(x)
+
+    x_mean <- sum(x) / total
+    y_mean <- sum(y) / total
+    z_mean <- sum(z) / total
+  } else if (sum(wts) == 0) {
+    warning("Empty point returned for groups with zero total weight")
+    x_mean <- NA
+    y_mean <- NA
+    z_mean <- NA
+  } else {
+    total <- sum(wts)
+  
+    x_mean <- sum(x * wts) / total
+    y_mean <- sum(y * wts) / total
+    z_mean <- sum(z * wts) / total
   }
-
-  total <- sum(wts)
-
-  x_mean <- sum(x * wts) / total
-  y_mean <- sum(y * wts) / total
-  z_mean <- sum(z * wts) / total
 
   l <- sqrt(sum((c(x_mean, y_mean, z_mean))^2))
 
@@ -18,17 +27,24 @@ cartesian_mean <- function(x, y, z, wts) {
   list(x = surface_x_mean, y = surface_y_mean, z = surface_z_mean)
 }
 
-planar_mean <- function(x, y, wts) {
-  if (all(wts == 0)) {
-    return(list(x = NA_real_, y = NA_real_))
+planar_mean <- function(X, Y, wts = NULL) {
+  if (is.null(wts)) {
+    total <- length(X)
+
+    x_mean <- sum(X) / total
+    y_mean <- sum(Y) / total
+  } else if (sum(wts) == 0) {
+    warning("Empty point returned for groups with zero total weight")
+    x_mean <- NA
+    y_mean <- NA
+  } else {
+    total <- sum(wts)
+
+    x_mean <- sum(X * wts) / total
+    y_mean <- sum(Y * wts) / total
   }
 
-  total <- sum(wts)
-
-  x_mean <- sum(x * wts) / total
-  y_mean <- sum(y * wts) / total
-
-  list(x = x_mean, y = y_mean)
+  list(X = x_mean, Y = y_mean)
 }
 
 #' Mean Center
@@ -61,43 +77,23 @@ planar_mean <- function(x, y, wts) {
 #' @export
 mean_center <- function(x, group = NULL, weight = NULL) {
   x_name <- deparse(substitute(x))
-  x_is_lonlat <- sf::st_is_longlat(x)
+  is_lonlat <- sf::st_is_longlat(x)
   allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x <- x_checks(x, x_name, allowed_geom)
-  grps <- group_checks(x, x_name, group)
-  wts <- weight_checks(x, x_name, weight)
+  x_checks(x, x_name, allowed_geom)
+  group_checks(x, x_name, group)
+  weight_checks(x, x_name, weight)
 
-  coords <- sf::st_coordinates(x) |>
-    as.data.frame() |> as.list()
-  names(coords) <- c("x", "y")
+  x_processed <- x_processing(x, is_lonlat, group, weight)
 
-  x_split <- coords |>
-    when(x_is_lonlat, do.call, what = lonlat_cartesian) |>
-    c(wts = list(wts)) |>
-    do.call(what = data.frame) |>
-    split(factor(grps, unique(grps)))
-
-  if (x_is_lonlat) {
-    centers <- x_split |>
+  if (is_lonlat) {
+    centers <- x_processed |>
       lapply(\(x) do.call(cartesian_mean, x)) |>
       lapply(\(x) do.call(cartesian_lonlat, x))
   } else {
-    centers <- x_split |>
+    centers <- x_processed |>
       lapply(\(x) do.call(planar_mean, x))
   }
 
-  output <- do.call(centers, what = rbind) |>
-    as.data.frame() |>
-    when(!is.null(group), rownames_to_column, colname = group) |>
-    sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(x), na.fail = FALSE)
-
-  if (any(sf::st_is_empty(output))) {
-    warning("Empty point returned for groups with zero total weight")
-  }
-  if (inherits(x, "tbl_df")) {
-    class(output) <- c("sf", "tbl_df", "tbl", "data.frame")
-  }
-
-  output
+  output_processing(centers, x, group)
 }
