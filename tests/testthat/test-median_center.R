@@ -41,18 +41,3 @@ test_that("zero weight group", {
     mean_center(x_zero_wts_proj, group = "grp", weight = "wts")
   )
 })
-
-test_that("macos test", {
-  tidycensus::get_decennial(
-    "tract", 
-    state = "NC", 
-    "P1_001N", 
-    year = 2020, 
-    geometry = TRUE
-  )  |>
-    transform(GEOID_county = substring(GEOID, 1, 5)) |>
-    subset(select = c(GEOID_county, value)) |>
-    subset(!sf::st_is_empty(geometry)) |>
-    sf::st_transform("EPSG:32119") |>
-    median_center(group = "GEOID_county", weight = "value")
-})

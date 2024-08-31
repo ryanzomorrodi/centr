@@ -1,5 +1,8 @@
 euclid_xy_dist <- function(X, Y, X_t, Y_t) {
-  sqrt((X - X_t)^2 + (Y - Y_t)^2)
+  dist <- sqrt((X - X_t)^2 + (Y - Y_t)^2)
+  dist[dist == 0] <- .Machine$double.eps
+
+  dist
 }
 
 planar_median_est <- function(X, Y, X_t, Y_t, wts = NULL) {

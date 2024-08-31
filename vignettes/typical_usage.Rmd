@@ -63,12 +63,19 @@ plot(st_geometry(NC_county_means), pch = 20, cex = 0.5, col = "red", add = TRUE)
 ## Calculating Median Centers
 We can also calculate median centers, which is the point that minimizes distance to all geometries. `median_center()` only supports projected coordinates, so let's project to the North Carolina state plane.
 ```{r}
+NC_tracts_proj <- st_transform(NC_tracts, crs = "EPSG:102003")
 
+NC_county_medians <- NC_tracts_proj |>
+  median_center(group = "GEOID_county", weight = "value")
+NC_county_medians
 ```
 
 Let's see how it looks.
 ```{r}
+NC_counties_proj <- st_transform(NC_counties, crs = "EPSG:32119")
 
+plot(st_geometry(NC_counties_proj))
+plot(st_geometry(NC_county_medians), pch = 20, cex = 0.5, col = "red", add = TRUE)
 ```
 
 And that's the whole game, so go out and try it for yourself!
