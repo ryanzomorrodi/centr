@@ -64,8 +64,7 @@ plot(st_geometry(NC_county_means), pch = 20, cex = 1, col = "red", add = TRUE)
 We can also calculate median centers, which is the point that minimizes distance to all geometries. `median_center()` only supports projected coordinates, so let's project to the North Carolina state plane.
 ```{r}
 NC_county_medians <- NC_tracts |>
-  st_transform(32119) |>
-  median_center(group = "GEOID_county", weight = "value")
+  st_transform(32119)
 ```
 
 Let's see how it looks.
