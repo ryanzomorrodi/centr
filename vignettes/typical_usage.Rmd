@@ -42,13 +42,13 @@ Let's use `mean_center()` to get our county geometries!
 mean_center(NC_tracts, group = "GEOID_county", weight = "value")
 ```
 
-## Calculation Mean Centers
 Oh, it looks like we forgot one thing. At least one of our tracts has an empty geometry. Before running `mean_center()`, we must filter out empty geometries. 
 ```{r}
 NC_tracts <- subset(NC_tracts, !st_is_empty(NC_tracts))
 ```
 
-Now, we can proceed.
+## Calculation Mean Centers
+Now, we can calculate our mean centers!
 ```{r}
 NC_county_means <- mean_center(NC_tracts, group = "GEOID_county", weight = "value")
 NC_county_means
