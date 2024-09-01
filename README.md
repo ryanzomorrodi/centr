@@ -55,9 +55,9 @@ mean_center(x, group = "grp", weight = "wt")
 #> Dimension:     XY
 #> Bounding box:  xmin: 17.51482 ymin: 29.00224 xmax: 65.92087 ymax: 63.32603
 #> Geodetic CRS:  WGS 84
-#>   grp                  geometry
-#> 1   a POINT (17.51482 29.00224)
-#> 2   b POINT (65.92087 63.32603)
+#>   group                  geometry
+#> 1     a POINT (17.51482 29.00224)
+#> 2     b POINT (65.92087 63.32603)
 ```
 
 Median center iteratively calculates the point that minimizes distance
@@ -84,7 +84,7 @@ median_center(x_transformed, group = "grp", weight = "wt")
 #> Dimension:     XY
 #> Bounding box:  xmin: 4950281 ymin: 4293605 xmax: 8226081 ymax: 8151342
 #> Projected CRS: USA_Contiguous_Albers_Equal_Area_Conic
-#>   grp                geometry
-#> 1   a POINT (8226081 4293605)
-#> 2   b POINT (4950281 8151342)
+#>   group                geometry
+#> 1     a POINT (8226081 4293605)
+#> 2     b POINT (4950281 8151342)
 ```
