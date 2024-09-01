@@ -1,3 +1,5 @@
+# centr 0.2.0
+
 # version 0.2
 
 * Warning given if empty geometries returned due to zero total weight groups
