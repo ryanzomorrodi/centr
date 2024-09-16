@@ -68,18 +68,16 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #' @export
 median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   x_name <- deparse(substitute(x))
-  is_lonlat <- sf::st_is_longlat(x)
-  allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x_checks(x, x_name, allowed_geom)
-  if (is_lonlat) {
+  x_checks(x, x_name)
+  if (is_lonlat(x)) {
     stop("`", x_name, "` does not have a defined projection")
   }
 
   group_checks(x, x_name, group)
   weight_checks(x, x_name, weight)
 
-  x_processed <- x_processing(x, is_lonlat, group, weight)
+  x_processed <- x_processing(x, group, weight)
 
   centers <- x_processed |>
     lapply(\(x) do.call(planar_median, c(x, tolerance)))

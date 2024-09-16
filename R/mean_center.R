@@ -77,16 +77,14 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' @export
 mean_center <- function(x, group = NULL, weight = NULL) {
   x_name <- deparse(substitute(x))
-  is_lonlat <- sf::st_is_longlat(x)
-  allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x_checks(x, x_name, allowed_geom)
+  x_checks(x, x_name)
   group_checks(x, x_name, group)
   weight_checks(x, x_name, weight)
 
-  x_processed <- x_processing(x, is_lonlat, group, weight)
+  x_processed <- x_processing(x, group, weight)
 
-  if (is_lonlat) {
+  if (is_lonlat(x)) {
     centers <- x_processed |>
       lapply(\(x) do.call(cartesian_mean, x)) |>
       lapply(\(x) do.call(cartesian_lonlat, x))
