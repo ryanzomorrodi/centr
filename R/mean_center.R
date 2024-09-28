@@ -1,11 +1,5 @@
 cartesian_mean <- function(x, y, z, wts = NULL) {
-  if (is.null(wts)) {
-    total <- length(x)
-
-    x_mean <- sum(x) / total
-    y_mean <- sum(y) / total
-    z_mean <- sum(z) / total
-  } else if (sum(wts) == 0) {
+  if (sum(wts) == 0) {
     warning("Empty point returned for groups with zero total weight")
     x_mean <- NA
     y_mean <- NA
@@ -28,12 +22,7 @@ cartesian_mean <- function(x, y, z, wts = NULL) {
 }
 
 planar_mean <- function(X, Y, wts = NULL) {
-  if (is.null(wts)) {
-    total <- length(X)
-
-    x_mean <- sum(X) / total
-    y_mean <- sum(Y) / total
-  } else if (sum(wts) == 0) {
+  if (sum(wts) == 0) {
     warning("Empty point returned for groups with zero total weight")
     x_mean <- NA
     y_mean <- NA
@@ -77,23 +66,38 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' @export
 mean_center <- function(x, group = NULL, weight = NULL) {
   x_name <- deparse(substitute(x))
-  is_lonlat <- sf::st_is_longlat(x)
-  allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x_checks(x, x_name, allowed_geom)
+  x_checks(x, x_name)
   group_checks(x, x_name, group)
   weight_checks(x, x_name, weight)
 
-  x_processed <- x_processing(x, is_lonlat, group, weight)
+  x_w_coords <- x_processing(x)
 
-  if (is_lonlat) {
-    centers <- x_processed |>
-      lapply(\(x) do.call(cartesian_mean, x)) |>
-      lapply(\(x) do.call(cartesian_lonlat, x))
+  if (is.null(weight)) {
+    x_w_coords$.weight <- rep(1, nrow(x))
   } else {
-    centers <- x_processed |>
-      lapply(\(x) do.call(planar_mean, x))
+    colnames(x_w_coords)[colnames(x_w_coords) == weight] <- ".weight"
+  }
+  
+  if (sf::st_is_longlat(x)) {
+    centers <- x_w_coords |>
+      dplyr::mutate(
+        geometry = do_call(tibble::tibble, do_call(lonlat_cartesian, geometry))
+      ) |>
+      dplyr::summarise(
+        geometry = do_call(tibble::tibble, do_call(cartesian_mean, geometry, wts = .weight)),
+        .by = dplyr::all_of(group)
+      ) |>
+      dplyr::mutate(
+        geometry = do_call(tibble::tibble, do_call(cartesian_lonlat, geometry))
+      )
+  } else {
+    centers <- x_w_coords  |>
+      dplyr::summarise(
+        geometry = do_call(tibble::tibble, do_call(planar_mean, geometry, wts = .weight)),
+        .by = dplyr::all_of(group)
+      )
   }
 
-  output_processing(centers, x, group)
+  output_processing(centers, x)
 }

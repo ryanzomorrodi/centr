@@ -13,14 +13,14 @@ test_that("lonlat cartesian conversions", {
 
 test_that("x checks", {
   "non-sf class"
-  expect_error(x_checks(df, "x", c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))
+  expect_error(x_checks(df, "x"))
 
   "non point/polygon"
-  expect_error(x_checks(sf::st_cast(x, "LINESTRING"), "x", c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))
+  expect_error(x_checks(sf::st_cast(x, "LINESTRING"), "x"))
 
   "no CRS"
   x_noCRS <- sf::st_set_crs(x, NA)
-  expect_error(x_checks(x_noCRS, "x", c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))
+  expect_error(x_checks(x_noCRS, "x"))
 
   "no geometry"
   x_emptyGeom <- sf::st_as_sf(
@@ -28,10 +28,10 @@ test_that("x checks", {
     coords = c("x", "y"), 
     na.fail = FALSE
   )
-  expect_error(x_checks(x_emptyGeom, "x", c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))
+  expect_error(x_checks(x_emptyGeom, "x"))
 
   "pass"
-  expect_no_error(x_checks(x, "x", c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")))
+  expect_no_error(x_checks(x, "x"))
 })
 
 test_that("weight checks", {
@@ -80,5 +80,3 @@ test_that("output", {
   "crs"
   expect_equal(sf::st_crs(mean_center(x)), sf::st_crs(x))
 })
-
-

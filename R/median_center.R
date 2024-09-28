@@ -5,7 +5,7 @@ euclid_xy_dist <- function(X, Y, X_t, Y_t) {
   dist
 }
 
-planar_median_est <- function(X, Y, X_t, Y_t, wts = NULL) {
+planar_median_est <- function(X, Y, X_t, Y_t, wts) {
   d_t <- euclid_xy_dist(X, Y, X_t, Y_t)
   k_t <- wts / d_t
 
@@ -15,10 +15,8 @@ planar_median_est <- function(X, Y, X_t, Y_t, wts = NULL) {
   list(X = x_estimate, Y = y_estimate)
 }
 
-planar_median <- function(X, Y, tol, wts = NULL) {
-  if (is.null(wts)) {
-    wts <- rep(1, length(X))
-  } else if (sum(wts) == 0) {
+planar_median <- function(X, Y, tol, wts) {
+  if (sum(wts) == 0) {
     warning("Empty point returned for groups with zero total weight")
     return(list(x = NA_real_, y = NA_real_))
   }
@@ -68,21 +66,30 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #' @export
 median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   x_name <- deparse(substitute(x))
-  is_lonlat <- sf::st_is_longlat(x)
-  allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
 
-  x_checks(x, x_name, allowed_geom)
-  if (is_lonlat) {
-    stop("`", x_name, "` does not have a defined projection")
-  }
-
+  x_checks(x, x_name)
   group_checks(x, x_name, group)
   weight_checks(x, x_name, weight)
 
-  x_processed <- x_processing(x, is_lonlat, group, weight)
+  x_w_coords <- x_processing(x)
 
-  centers <- x_processed |>
-    lapply(\(x) do.call(planar_median, c(x, tolerance)))
+  if (is.null(weight)) {
+    x_w_coords$.weight <- rep(1, nrow(x))
+  } else {
+    colnames(x_w_coords)[colnames(x_w_coords) == weight] <- ".weight"
+  }
+  
+  if (sf::st_is_longlat(x)) {
+    stop("median_center() is not supported for lon lat geometries")
+  } else {
+    centers <- x_w_coords  |>
+      dplyr::summarise(
+        geometry = do_call(tibble::tibble, 
+          do_call(planar_median, geometry, wts = .weight, tol = tolerance)
+        ),
+        .by = dplyr::all_of(group)
+      )
+  }
 
-  output_processing(centers, x, group)
+  output_processing(centers, x)
 }
