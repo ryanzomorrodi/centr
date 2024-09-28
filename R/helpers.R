@@ -43,12 +43,12 @@ x_checks <- function(x, x_name) {
 x_processing <- function(x, weight) {
   coordinates <- suppressWarnings(sf::st_centroid(x)) |>
     sf::st_coordinates()  |>
-      tibble::as_tibble() |>
+      as.data.frame() |>
       tibble::tibble(geometry = _)
     
   x |>
     sf::st_drop_geometry() |>
-    tibble::tibble() |>
+    as.data.frame() |>
     dplyr::bind_cols(coordinates)
 }
 

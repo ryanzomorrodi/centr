@@ -82,19 +82,19 @@ mean_center <- function(x, group = NULL, weight = NULL) {
   if (sf::st_is_longlat(x)) {
     centers <- x_w_coords |>
       dplyr::mutate(
-        geometry = do_call(tibble::tibble, do_call(lonlat_cartesian, geometry))
+        geometry = as.data.frame(do_call(lonlat_cartesian, geometry))
       ) |>
       dplyr::summarise(
-        geometry = do_call(tibble::tibble, do_call(cartesian_mean, geometry, wts = .weight)),
+        geometry = as.data.frame(do_call(cartesian_mean, geometry, wts = .weight)),
         .by = dplyr::all_of(group)
       ) |>
       dplyr::mutate(
-        geometry = do_call(tibble::tibble, do_call(cartesian_lonlat, geometry))
+        geometry = as.data.frame(do_call(cartesian_lonlat, geometry))
       )
   } else {
     centers <- x_w_coords  |>
       dplyr::summarise(
-        geometry = do_call(tibble::tibble, do_call(planar_mean, geometry, wts = .weight)),
+        geometry = as.data.frame(do_call(planar_mean, geometry, wts = .weight)),
         .by = dplyr::all_of(group)
       )
   }

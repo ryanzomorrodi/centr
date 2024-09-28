@@ -84,7 +84,7 @@ median_center <- function(x, group = NULL, weight = NULL, tolerance = 0.0001) {
   } else {
     centers <- x_w_coords  |>
       dplyr::summarise(
-        geometry = do_call(tibble::tibble, 
+        geometry = as.data.frame(
           do_call(planar_median, geometry, wts = .weight, tol = tolerance)
         ),
         .by = dplyr::all_of(group)
