@@ -1,4 +1,6 @@
-# centr 0.2.0
+# centr (development version)
+
+* Allows for grouping on multiple columns (adds `dplyr` and `tibble` dependencies to do so)
 
 # version 0.2
 

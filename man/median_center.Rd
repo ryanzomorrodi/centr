@@ -10,7 +10,7 @@ median_center(x, group = NULL, weight = NULL, tolerance = 1e-04)
 \item{x}{Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
 simple features}
 
-\item{group}{name of character column specifying groups
+\item{group}{name of column(s) specifying groups
 to calculate individual median centers for}
 
 \item{weight}{name of numeric weight column specifying an
