@@ -49,7 +49,7 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' spherical Earth. Projected data is calculated assuming a
 #' "flat" Earth.
 #' @param x Input POINT or POLYGON simple features
-#' @param group name of character column specifying groups
+#' @param group name of column(s) specifying groups
 #'  to calculate individual mean centers for
 #' @param weight name of numeric weight column specifying an
 #'  individual point's contribution to the mean center
