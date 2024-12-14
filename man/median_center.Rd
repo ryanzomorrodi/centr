@@ -4,21 +4,22 @@
 \alias{median_center}
 \title{Median Center}
 \usage{
-median_center(x, group = NULL, weight = NULL, tolerance = 1e-04)
+median_center(x, group, weight, tolerance = 1e-04, ...)
 }
 \arguments{
-\item{x}{Input POINT, MULTIPOINT, POLYGON, or MULTIPOLYGON
-simple features}
+\item{x}{Input POINT or POLYGON simple features}
 
-\item{group}{name of character column specifying groups
-to calculate individual median centers for}
+\item{group}{column name(s) specifying groups
+to calculate individual mean centers for}
 
 \item{weight}{name of numeric weight column specifying an
-individual point's contribution to the median center}
+individual point's contribution to the mean center}
 
 \item{tolerance}{numeric threshold determining when an
 estimate improvement is sufficiently small enough to stop
 iterating (smaller = slower, but more precision)}
+
+\item{...}{expressions passed to \code{dplyr::summarize()}}
 }
 \value{
 An sf object with a median center for each group
@@ -44,4 +45,8 @@ df <- data.frame(
 x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
 median_center(x_transformed, group = "grp", weight = "wt")
+
+x_transformed |>
+  dplyr::group_by(grp) |>
+  median_center(weight = "wt")
 }
