@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   typical_usage: typical_usage.html
-last_built: 2024-12-14T19:17Z
+last_built: 2024-12-14T20:57Z
 urls:
   reference: https://ryanzomorrodi.github.io/centr/reference
   article: https://ryanzomorrodi.github.io/centr/articles
