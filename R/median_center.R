@@ -71,7 +71,27 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #'   median_center(weight = "wt")
 #' @export
 median_center <- function(x, group, weight, tolerance = 0.0001) {
-  is_lonlat <- sf::st_is_longlat(x)
+  chk::chk_s3_class(x, "sf")
+  chk_not_any_empty_sf(x)
+  chk_only_allowed_sf(x)
+  chk_not_na_crs(x)
+  
+  if (!missing(group)) {
+    chk::chk_character(group)
+    chk_columns_exist(x, group)
+  } else {
+    group <- dplyr::group_cols(data = x)
+  }
+  if (!missing(weight)) {
+    chk::chk_string(weight)
+    chk_columns_exist(x, weight)
+    chk::chk_numeric(x[[weight]])
+    chk::chk_not_any_na(x[[weight]])
+    chk_not_any_infinite(x[[weight]])
+    chk::chk_gte(x[[weight]], 0)
+  }
+  chk_is_not_lonlat(x)
+
   crs <- sf::st_crs(x)
   coordinates <- suppressWarnings(sf::st_centroid(x)) |>
     sf::st_coordinates() |>
@@ -84,13 +104,9 @@ median_center <- function(x, group, weight, tolerance = 0.0001) {
     x[[sf_column]] <- coordinates
   }
 
-  if (is_lonlat) {
+  x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
+  x <- dplyr::summarise(x, ..., geometry = do.call(\(...) planar_median(tolerance = tolerance, ...), .data[[sf_column]]))
 
-  } else {
-    x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
-    x <- dplyr::summarise(x, ..., geometry = do.call(\(...) planar_median(tolerance = tolerance, ...), .data[[sf_column]]))
-  }
-  
   x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
   sf::st_as_sf(x) |>
     dplyr::ungroup()

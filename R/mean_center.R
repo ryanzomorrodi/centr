@@ -79,6 +79,26 @@ planar_mean <- function(X, Y, wts = NULL) {
 #'   mean_center(weight = "wt")
 #' @export
 mean_center <- function(x, group, weight, ...) {
+  chk::chk_s3_class(x, "sf")
+  chk_not_any_empty_sf(x)
+  chk_only_allowed_sf(x)
+  chk_not_na_crs(x)
+  
+  if (!missing(group)) {
+    chk::chk_character(group)
+    chk_columns_exist(x, group)
+  } else {
+    group <- dplyr::group_cols(data = x)
+  }
+  if (!missing(weight)) {
+    chk::chk_string(weight)
+    chk_columns_exist(x, weight)
+    chk::chk_numeric(x[[weight]])
+    chk::chk_not_any_na(x[[weight]])
+    chk_not_any_infinite(x[[weight]])
+    chk::chk_gte(x[[weight]], 0)
+  }
+  
   is_lonlat <- sf::st_is_longlat(x)
   crs <- sf::st_crs(x)
   coordinates <- suppressWarnings(sf::st_centroid(x)) |>
