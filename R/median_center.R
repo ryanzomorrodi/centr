@@ -53,7 +53,7 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #' @param tolerance numeric threshold determining when an
 #'  estimate improvement is sufficiently small enough to stop
 #'  iterating (smaller = slower, but more precision)
-#' @param ... expressions passed to `dplyr::summarize()`
+#' @param ... expressions passed to `dplyr::summarise()`
 #' @returns An sf object with a median center for each group
 #' @examples
 #' df <- data.frame(

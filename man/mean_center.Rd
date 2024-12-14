@@ -15,7 +15,7 @@ to calculate individual mean centers for}
 \item{weight}{name of numeric weight column specifying an
 individual point's contribution to the mean center}
 
-\item{...}{expressions passed to \code{dplyr::summarize()}}
+\item{...}{expressions passed to \code{dplyr::summarise()}}
 }
 \value{
 An sf object with a mean center for each group

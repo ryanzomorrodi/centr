@@ -62,7 +62,7 @@ planar_mean <- function(X, Y, wts = NULL) {
 #'  to calculate individual mean centers for
 #' @param weight name of numeric weight column specifying an
 #'  individual point's contribution to the mean center
-#' @param ... expressions passed to `dplyr::summarize()`
+#' @param ... expressions passed to `dplyr::summarise()`
 #' @returns An sf object with a mean center for each group
 #' @examples
 #' df <- data.frame(

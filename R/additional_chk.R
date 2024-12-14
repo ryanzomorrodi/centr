@@ -33,7 +33,7 @@ chk_columns_exist <- function(x, columns, x_name = NULL) {
   }
   if (is.null(x_name)) x_name <- chk::deparse_backtick_chk(substitute(x))
   
-  chk::abort_chk("Can't find column `", head(columns[which(!columns_exist)], 1), "` in ", x_name, x = x)
+  chk::abort_chk("Can't find column `", columns[which(!columns_exist)][1], "` in ", x_name, x = x)
 }
 vld_columns_exist <- function(x, columns) columns %in% colnames(x)
 

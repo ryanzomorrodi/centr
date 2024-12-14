@@ -19,7 +19,7 @@ individual point's contribution to the mean center}
 estimate improvement is sufficiently small enough to stop
 iterating (smaller = slower, but more precision)}
 
-\item{...}{expressions passed to \code{dplyr::summarize()}}
+\item{...}{expressions passed to \code{dplyr::summarise()}}
 }
 \value{
 An sf object with a median center for each group
