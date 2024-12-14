@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Typical Usage">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">centr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Typical Usage</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ryanzomorrodi/centR/blob/v0.2.0/vignettes/typical_usage.Rmd" class="external-link"><code>vignettes/typical_usage.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ryanzomorrodi/centR/blob/main/vignettes/typical_usage.Rmd" class="external-link"><code>vignettes/typical_usage.Rmd</code></a></small>
       <div class="d-none name"><code>typical_usage.Rmd</code></div>
     </div>
 
@@ -110,7 +110,8 @@ gives us our weights.</p>
 geometries!</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mean_center.html">mean_center</a></span><span class="op">(</span><span class="va">NC_tracts</span>, group <span class="op">=</span> <span class="st">"GEOID_county"</span>, weight <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in x_checks(x, x_name, allowed_geom): `NC_tracts` contains empty geometries</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `mean_center()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> `x` must not have any empty geometries.</span></span></code></pre></div>
 <p>Oh, it looks like we forgot one thing. At least one of our tracts has
 an empty geometry. Before running <code><a href="../reference/mean_center.html">mean_center()</a></code>, we must
 filter out empty geometries.</p>
@@ -129,18 +130,20 @@ filter out empty geometries.</p>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: -84.02568 ymin: 34.0428 xmax: -75.67387 ymax: 36.49819</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  NAD83</span></span>
-<span><span class="co">#&gt; First 10 features:</span></span>
-<span><span class="co">#&gt;    group                   geometry</span></span>
-<span><span class="co">#&gt; 1  37037  POINT (-79.2079 35.75337)</span></span>
-<span><span class="co">#&gt; 2  37105  POINT (-79.1755 35.46066)</span></span>
-<span><span class="co">#&gt; 3  37013 POINT (-76.94663 35.52365)</span></span>
-<span><span class="co">#&gt; 4  37001 POINT (-79.41359 36.07104)</span></span>
-<span><span class="co">#&gt; 5  37063 POINT (-78.90047 35.98795)</span></span>
-<span><span class="co">#&gt; 6  37065 POINT (-77.65082 35.90178)</span></span>
-<span><span class="co">#&gt; 7  37129 POINT (-77.87961 34.21068)</span></span>
-<span><span class="co">#&gt; 8  37151 POINT (-79.82808 35.76379)</span></span>
-<span><span class="co">#&gt; 9  37159 POINT (-80.52144 35.62169)</span></span>
-<span><span class="co">#&gt; 10 37181 POINT (-78.40247 36.33333)</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 2</span></span></span>
+<span><span class="co">#&gt;    GEOID_county             geometry</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;POINT [°]&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 37001        (-79.41359 36.07104)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 37003        (-81.19492 35.88941)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 37005        (-81.10783 36.49819)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 37007        (-80.10947 34.98287)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 37009        (-81.49321 36.42097)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 37011        (-81.93716 36.07862)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 37013        (-76.94663 35.52365)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 37015        (-76.94512 36.06374)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 37017        (-78.63796 34.60854)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 37019          (-78.2212 34.0428)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span></code></pre></div>
 <p>Let’s see how it looks.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">NC_counties</span><span class="op">)</span><span class="op">)</span></span>
@@ -165,18 +168,20 @@ state plane.</p>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: 152678.1 ymin: 30541.25 xmax: 908546.1 ymax: 309372.5</span></span>
 <span><span class="co">#&gt; Projected CRS: NAD83 / North Carolina</span></span>
-<span><span class="co">#&gt; First 10 features:</span></span>
-<span><span class="co">#&gt;    group                  geometry</span></span>
-<span><span class="co">#&gt; 1  37037   POINT (594827.4 223972)</span></span>
-<span><span class="co">#&gt; 2  37105 POINT (593571.9 190317.3)</span></span>
-<span><span class="co">#&gt; 3  37013 POINT (792026.9 199744.2)</span></span>
-<span><span class="co">#&gt; 4  37001 POINT (571361.8 258461.8)</span></span>
-<span><span class="co">#&gt; 5  37063 POINT (618402.7 248046.7)</span></span>
-<span><span class="co">#&gt; 6  37065 POINT (732252.2 238926.9)</span></span>
-<span><span class="co">#&gt; 7  37129  POINT (712703.4 52208.8)</span></span>
-<span><span class="co">#&gt; 8  37151 POINT (535552.1 222369.7)</span></span>
-<span><span class="co">#&gt; 9  37159 POINT (472416.9 209383.7)</span></span>
-<span><span class="co">#&gt; 10 37181 POINT (662822.4 286103.9)</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 2</span></span></span>
+<span><span class="co">#&gt;    GEOID_county            geometry</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;POINT [m]&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 37001        (571361.8 258461.8)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 37003        (411766.7 239170.4)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 37005        (419809.1 309372.5)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 37007        (509749.3 136238.7)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 37009          (385734.1 298869)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 37011        (344627.9 264143.7)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 37013        (792026.9 199744.2)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 37015        (795178.3 256677.5)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 37017        (642697.8 96331.03)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 37019        (683996.6 30541.25)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span></code></pre></div>
 <p>Let’s see how it looks.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NC_counties_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">NC_counties</span>, crs <span class="op">=</span> <span class="st">"EPSG:32119"</span><span class="op">)</span></span>
@@ -197,7 +202,7 @@ state plane.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Weighted and Unweighted Spatial Centers">
 <meta name="description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro. Median center methodology based off of Kuhn and Kuenne (1962) &lt;doi:10.1111/j.1467-9787.1962.tb00902.x&gt;.">
 <meta property="og:description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro. Median center methodology based off of Kuhn and Kuenne (1962) &lt;doi:10.1111/j.1467-9787.1962.tb00902.x&gt;.">
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">centr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,9 +99,9 @@
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: 17.51482 ymin: 29.00224 xmax: 65.92087 ymax: 63.32603</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
-<span><span class="co">#&gt;   grp                  geometry</span></span>
-<span><span class="co">#&gt; 1   a POINT (17.51482 29.00224)</span></span>
-<span><span class="co">#&gt; 2   b POINT (65.92087 63.32603)</span></span></code></pre></div>
+<span><span class="co">#&gt;   group                  geometry</span></span>
+<span><span class="co">#&gt; 1     a POINT (17.51482 29.00224)</span></span>
+<span><span class="co">#&gt; 2     b POINT (65.92087 63.32603)</span></span></code></pre></div>
 <p>Median center iteratively calculates the point that minimizes distance to all features. One can specify the groups to calculate individual centers for and weights for each individual point. It is analagous to the <a href="https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm" class="external-link">ArcGIS Pro Median Center</a> tool.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ryanzomorrodi.github.io/centr/">centr</a></span><span class="op">)</span></span>
@@ -120,9 +120,9 @@
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: 4950281 ymin: 4293605 xmax: 8226081 ymax: 8151342</span></span>
 <span><span class="co">#&gt; Projected CRS: USA_Contiguous_Albers_Equal_Area_Conic</span></span>
-<span><span class="co">#&gt;   grp                geometry</span></span>
-<span><span class="co">#&gt; 1   a POINT (8226081 4293605)</span></span>
-<span><span class="co">#&gt; 2   b POINT (4950281 8151342)</span></span></code></pre></div>
+<span><span class="co">#&gt;   group                geometry</span></span>
+<span><span class="co">#&gt; 1     a POINT (8226081 4293605)</span></span>
+<span><span class="co">#&gt; 2     b POINT (4950281 8151342)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -176,7 +176,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
