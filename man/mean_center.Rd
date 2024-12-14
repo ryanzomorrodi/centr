@@ -4,16 +4,18 @@
 \alias{mean_center}
 \title{Mean Center}
 \usage{
-mean_center(x, group = NULL, weight = NULL)
+mean_center(x, group, weight, ...)
 }
 \arguments{
 \item{x}{Input POINT or POLYGON simple features}
 
-\item{group}{name of character column specifying groups
+\item{group}{column name(s) specifying groups
 to calculate individual mean centers for}
 
 \item{weight}{name of numeric weight column specifying an
 individual point's contribution to the mean center}
+
+\item{...}{expressions passed to \code{dplyr::summarize()}}
 }
 \value{
 An sf object with a mean center for each group
@@ -38,4 +40,8 @@ df <- data.frame(
 )
 x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 mean_center(x, group = "grp", weight = "wt")
+
+x |>
+  dplyr::group_by(grp) |>
+  mean_center(weight = "wt")
 }

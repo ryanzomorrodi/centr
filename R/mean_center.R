@@ -58,10 +58,11 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' spherical Earth. Projected data is calculated assuming a
 #' "flat" Earth.
 #' @param x Input POINT or POLYGON simple features
-#' @param group name of character column specifying groups
+#' @param group column name(s) specifying groups
 #'  to calculate individual mean centers for
 #' @param weight name of numeric weight column specifying an
 #'  individual point's contribution to the mean center
+#' @param ... expressions passed to `dplyr::summarize()`
 #' @returns An sf object with a mean center for each group
 #' @examples
 #' df <- data.frame(
@@ -72,6 +73,10 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' )
 #' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' mean_center(x, group = "grp", weight = "wt")
+#' 
+#' x |>
+#'   dplyr::group_by(grp) |>
+#'   mean_center(weight = "wt")
 #' @export
 mean_center <- function(x, group, weight, ...) {
   is_lonlat <- sf::st_is_longlat(x)
