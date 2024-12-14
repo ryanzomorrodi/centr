@@ -13,14 +13,15 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    sf
+    dplyr,
+    sf,
+    tibble
 URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centR
 Suggests: 
     data.table,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    tibble,
     tidycensus
 Config/testthat/edition: 3
 BugReports: https://github.com/ryanzomorrodi/centR/issues

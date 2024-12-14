@@ -6,7 +6,6 @@ cartesian_mean <- function(x, y, z, wts = NULL) {
     y_mean <- sum(y) / total
     z_mean <- sum(z) / total
   } else if (sum(wts) == 0) {
-    warning("Empty point returned for groups with zero total weight")
     x_mean <- NA
     y_mean <- NA
     z_mean <- NA
@@ -24,7 +23,7 @@ cartesian_mean <- function(x, y, z, wts = NULL) {
   surface_y_mean <- y_mean / l
   surface_z_mean <- z_mean / l
 
-  list(x = surface_x_mean, y = surface_y_mean, z = surface_z_mean)
+  tibble::tibble(x = surface_x_mean, y = surface_y_mean, z = surface_z_mean)
 }
 
 planar_mean <- function(X, Y, wts = NULL) {
@@ -34,7 +33,6 @@ planar_mean <- function(X, Y, wts = NULL) {
     x_mean <- sum(X) / total
     y_mean <- sum(Y) / total
   } else if (sum(wts) == 0) {
-    warning("Empty point returned for groups with zero total weight")
     x_mean <- NA
     y_mean <- NA
   } else {
@@ -44,7 +42,7 @@ planar_mean <- function(X, Y, wts = NULL) {
     y_mean <- sum(Y * wts) / total
   }
 
-  list(X = x_mean, Y = y_mean)
+  tibble::tibble(X = x_mean, Y = y_mean)
 }
 
 #' Mean Center
@@ -75,25 +73,31 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' mean_center(x, group = "grp", weight = "wt")
 #' @export
-mean_center <- function(x, group = NULL, weight = NULL) {
-  x_name <- deparse(substitute(x))
+mean_center <- function(x, group, weight, ...) {
   is_lonlat <- sf::st_is_longlat(x)
-  allowed_geom <- c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
-
-  x_checks(x, x_name, allowed_geom)
-  group_checks(x, x_name, group)
-  weight_checks(x, x_name, weight)
-
-  x_processed <- x_processing(x, is_lonlat, group, weight)
-
-  if (is_lonlat) {
-    centers <- x_processed |>
-      lapply(\(x) do.call(cartesian_mean, x)) |>
-      lapply(\(x) do.call(cartesian_lonlat, x))
+  crs <- sf::st_crs(x)
+  coordinates <- suppressWarnings(sf::st_centroid(x)) |>
+    sf::st_coordinates() |>
+    tibble::as_tibble()
+  sf_column <- attr(x, "sf_column")
+  x <- tibble::tibble(x)
+  if (!missing(weight)) {
+    x[[sf_column]] <- dplyr::bind_cols(coordinates, wts = x[[weight]])
   } else {
-    centers <- x_processed |>
-      lapply(\(x) do.call(planar_mean, x))
+    x[[sf_column]] <- coordinates
   }
 
-  output_processing(centers, x, group)
+  if (is_lonlat) {
+    x[[sf_column]] <- do.call(lonlat_cartesian, x[[sf_column]])
+    x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
+    x <- dplyr::summarise(x, ..., geometry = do.call(cartesian_mean, .data[[sf_column]]))
+    x[[sf_column]] <- do.call(cartesian_lonlat, x[[sf_column]])
+  } else {
+    x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
+    x <- dplyr::summarise(x, ..., geometry = do.call(planar_mean, .data[[sf_column]]))
+  }
+  
+  x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
+  sf::st_as_sf(x) |>
+    dplyr::ungroup()
 }
