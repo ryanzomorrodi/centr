@@ -7,6 +7,7 @@ df <- data.frame(
   grp = sample(c("a", "b", "c"), n, replace = TRUE),
   wts = sample.int(2, n, replace = TRUE)
 )
+df <- df[order(df$grp), ]
 x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 x_proj <- sf::st_transform(x, crs = "ESRI:102003") 
 

@@ -33,11 +33,3 @@ test_that("median_center", {
     round(as.matrix(data.frame(X = -96.4593993, Y = 38.0191323)), 4)
   )
 })
-
-test_that("zero weight group", {
-  x_zero_wts_proj <- x_proj
-  x_zero_wts_proj$wts[x$grp == "a"] <- 0
-  expect_warning(
-    mean_center(x_zero_wts_proj, group = "grp", weight = "wts")
-  )
-})

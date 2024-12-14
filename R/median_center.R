@@ -70,7 +70,7 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #'   dplyr::group_by(grp) |>
 #'   median_center(weight = "wt")
 #' @export
-median_center <- function(x, group, weight, tolerance = 0.0001) {
+median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
   chk::chk_s3_class(x, "sf")
   chk_not_any_empty_sf(x)
   chk_only_allowed_sf(x)
@@ -105,7 +105,7 @@ median_center <- function(x, group, weight, tolerance = 0.0001) {
   }
 
   x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
-  x <- dplyr::summarise(x, ..., geometry = do.call(\(...) planar_median(tolerance = tolerance, ...), .data[[sf_column]]))
+  x <- dplyr::summarise(x, ..., geometry = do.call(planar_median, c(as.list(.data[[sf_column]]), tol = tolerance)))
 
   x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
   sf::st_as_sf(x) |>
