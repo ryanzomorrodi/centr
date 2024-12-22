@@ -108,6 +108,15 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
   x <- dplyr::summarise(x, ..., geometry = do.call(planar_median, c(as.list(.data[[sf_column]]), tol = tolerance)))
 
   x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
-  sf::st_as_sf(x) |>
-    dplyr::ungroup()
+  x <- dplyr::ungroup(sf::st_as_sf(x))
+
+  center_is_empty <- sf::st_is_empty(x)
+  if (any(center_is_empty)) {
+    chk::wrn(
+      "Empty point%s returned for %n group%s with zero total weight", 
+      n = sum(center_is_empty)
+    )
+  }
+
+  x
 }
