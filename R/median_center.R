@@ -75,6 +75,7 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
   chk_not_any_empty_sf(x)
   chk_only_allowed_sf(x)
   chk_not_na_crs(x)
+  chk_is_not_lonlat(x)
   
   if (!missing(group)) {
     chk::chk_character(group)
@@ -90,7 +91,6 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
     chk_not_any_infinite(x[[weight]])
     chk::chk_gte(x[[weight]], 0)
   }
-  chk_is_not_lonlat(x)
 
   crs <- sf::st_crs(x)
   coordinates <- suppressWarnings(sf::st_centroid(x)) |>
