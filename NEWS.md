@@ -1,6 +1,14 @@
 # centr (development version)
 
-# centr 0.2.0
+# version 0.2.1
+
+* `mean_center()` and `median_center()` now support multiple group columns 
+  (#15).
+* `mean_center()` and `median_center()` now support passing `dplyr::summarise` 
+  `...` arguments. This makes it possible to summarise of tabular data as well 
+  as geometry.
+* `mean_center()` and `median_center()` now support grouped `tibbles`.
+* `mean_center()` and `median_center()` now always return `sf` `tibbles`.
 
 # version 0.2
 
