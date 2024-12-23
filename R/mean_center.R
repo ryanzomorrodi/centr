@@ -114,12 +114,12 @@ mean_center <- function(x, group, weight, ...) {
 
   if (is_lonlat) {
     x[[sf_column]] <- do.call(lonlat_cartesian, x[[sf_column]])
-    x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
-    x <- dplyr::summarise(x, ..., geometry = do.call(cartesian_mean, .data[[sf_column]]))
+    x <- dplyr::group_by(x, dplyr::pick({{ group }}))
+    x <- dplyr::summarise(x, ..., geometry = do.call(cartesian_mean, dplyr::pick({{ sf_column }})[[1]]))
     x[[sf_column]] <- do.call(cartesian_lonlat, x[[sf_column]])
   } else {
-    x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
-    x <- dplyr::summarise(x, ..., geometry = do.call(planar_mean, .data[[sf_column]]))
+    x <- dplyr::group_by(x, dplyr::pick({{ group }}))
+    x <- dplyr::summarise(x, ..., geometry = do.call(planar_mean, dplyr::pick({{ sf_column }})[[1]]))
   }
   
   x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))

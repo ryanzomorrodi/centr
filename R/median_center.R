@@ -104,8 +104,12 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
     x[[sf_column]] <- coordinates
   }
 
-  x <- dplyr::group_by(x, dplyr::across(dplyr::all_of(group)))
-  x <- dplyr::summarise(x, ..., geometry = do.call(planar_median, c(as.list(.data[[sf_column]]), tol = tolerance)))
+  x <- dplyr::group_by(x, dplyr::pick({{ group }}))
+  x <- dplyr::summarise(
+    x, 
+    ..., 
+    geometry = do.call(planar_median, c(as.list(dplyr::pick({{ sf_column }})[[1]]), tol = tolerance))
+  )
 
   x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
   x <- dplyr::ungroup(sf::st_as_sf(x))
