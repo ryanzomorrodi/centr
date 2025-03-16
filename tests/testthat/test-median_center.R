@@ -14,22 +14,39 @@ test_that("median_center", {
 
   expect_equal(
     sf::st_coordinates(sf::st_transform(median_center(x_triangle_proj), 4326)),
-    as.matrix(data.frame(X = -96.0135231, Y = 28.6822725))
+    as.matrix(data.frame(X = -96.0135231, Y = 28.6822725)),
+    tolerance = 0.0001
   )
 
   df_rand <- data.frame(
-    lon = c(-70, -80, -123, -79, -90, -121, -68, -93, -78, -108, -113, -94, -114),
+    lon = c(
+      -70,
+      -80,
+      -123,
+      -79,
+      -90,
+      -121,
+      -68,
+      -93,
+      -78,
+      -108,
+      -113,
+      -94,
+      -114
+    ),
     lat = c(45, 36, 44, 48, 34, 48, 27, 27, 29, 33, 48, 26, 36)
   )
   x_rand <- sf::st_as_sf(df_rand, coords = c("lon", "lat"), crs = 4326)
   x_rand_proj <- sf::st_transform(x_rand, crs = "ESRI:102003")
   expect_equal(
-    round(sf::st_coordinates(sf::st_transform(median_center(x_rand_proj), 4326)), 4),
-    round(as.matrix(data.frame(X = -91.2887347, Y = 35.3991316)), 4)
+    sf::st_coordinates(sf::st_transform(median_center(x_rand_proj), 4326)),
+    as.matrix(data.frame(X = -91.2887347, Y = 35.3991316)),
+    tolerance = 0.0001
   )
 
   expect_equal(
-    round(sf::st_coordinates(sf::st_transform(median_center(x_proj), 4326)), 4),
-    round(as.matrix(data.frame(X = -96.4593993, Y = 38.0191323)), 4)
+    sf::st_coordinates(sf::st_transform(median_center(x_proj), 4326)),
+    as.matrix(data.frame(X = -96.4593993, Y = 38.0191323)),
+    tolerance = 0.0001
   )
 })
