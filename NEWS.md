@@ -1,6 +1,8 @@
-# centr (development version)
+# centr 0.2.4
 
-# centr 0.2.2
+# centr 0.2.3
+
+* Adjust `testthat` tolerance to 4 decimal points due cran checks.
 
 # centr 0.2.2
 

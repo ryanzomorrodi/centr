@@ -1,6 +1,6 @@
 Package: centr
 Title: Weighted and Unweighted Spatial Centers
-Version: 0.2.2.9001
+Version: 0.2.3
 Authors@R: 
     person("Ryan", "Zomorrodi", , "rzomor2@uic.edu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0009-0003-6417-5985"))
@@ -19,7 +19,7 @@ Imports:
     dplyr,
     sf,
     tibble
-URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centR
+URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centr
 Suggests: 
     knitr,
     rmarkdown,
