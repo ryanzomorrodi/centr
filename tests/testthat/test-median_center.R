@@ -54,7 +54,7 @@ test_that("median_center", {
 test_that("column not named geometry should still work", {
   x_geom_col_proj <- x_proj
   colnames(x_geom_col_proj)[colnames(x_geom_col_proj) == "geometry"] <- "geom"
-  st_geometry(x_geom_col_proj) <- "geom"
+  sf::st_geometry(x_geom_col_proj) <- "geom"
 
   "projected"
   expect_equal(
