@@ -11,8 +11,8 @@ test_that("x checks", {
 
   "no geometry"
   x_emptyGeom <- sf::st_as_sf(
-    data.frame(x = c(1, NA), y = c(1, NA)), 
-    coords = c("x", "y"), 
+    data.frame(x = c(1, NA), y = c(1, NA)),
+    coords = c("x", "y"),
     na.fail = FALSE
   )
   expect_error(mean_center(x_emptyGeom))
@@ -110,6 +110,28 @@ test_that("weights and group behavior", {
   "projected"
   expect_equal(
     sf::st_coordinates(mean_center(x_proj, group = "grp", weight = "wts")),
+    sf::st_coordinates(sf::st_centroid(x_rep_grp_proj))
+  )
+})
+
+test_that("column not named geometry should still work", {
+  x_geom_col <- x
+  colnames(x_geom_col)[colnames(x_geom_col) == "geometry"] <- "geom"
+  st_geometry(x_geom_col) <- "geom"
+
+  "unprojected"
+  expect_equal(
+    sf::st_coordinates(mean_center(x_geom_col, group = "grp", weight = "wts")),
+    sf::st_coordinates(sf::st_centroid(x_rep_grp))
+  )
+
+  x_geom_col_proj <- x_proj
+  colnames(x_geom_col_proj)[colnames(x_geom_col_proj) == "geometry"] <- "geom"
+  st_geometry(x_geom_col_proj) <- "geom"
+
+  "projected"
+  expect_equal(
+    sf::st_coordinates(mean_center(x_geom_col_proj, group = "grp", weight = "wts")),
     sf::st_coordinates(sf::st_centroid(x_rep_grp_proj))
   )
 })

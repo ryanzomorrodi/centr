@@ -11,7 +11,7 @@ cartesian_mean <- function(x, y, z, wts = NULL) {
     z_mean <- NA
   } else {
     total <- sum(wts)
-  
+
     x_mean <- sum(x * wts) / total
     y_mean <- sum(y * wts) / total
     z_mean <- sum(z * wts) / total
@@ -73,7 +73,7 @@ planar_mean <- function(X, Y, wts = NULL) {
 #' )
 #' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' mean_center(x, group = "grp", weight = "wt")
-#' 
+#'
 #' x |>
 #'   dplyr::group_by(grp) |>
 #'   mean_center(weight = "wt")
@@ -83,7 +83,7 @@ mean_center <- function(x, group, weight, ...) {
   chk_not_any_empty_sf(x)
   chk_only_allowed_sf(x)
   chk_not_na_crs(x)
-  
+
   if (!missing(group)) {
     chk::chk_character(group)
     chk_columns_exist(x, group)
@@ -98,7 +98,7 @@ mean_center <- function(x, group, weight, ...) {
     chk_not_any_infinite(x[[weight]])
     chk::chk_gte(x[[weight]], 0)
   }
-  
+
   is_lonlat <- sf::st_is_longlat(x)
   crs <- sf::st_crs(x)
   coordinates <- suppressWarnings(sf::st_centroid(x)) |>
@@ -116,19 +116,19 @@ mean_center <- function(x, group, weight, ...) {
     x[[sf_column]] <- do.call(lonlat_cartesian, x[[sf_column]])
     x <- dplyr::group_by(x, dplyr::pick({{ group }}))
     x <- dplyr::summarise(x, ..., geometry = do.call(cartesian_mean, dplyr::pick({{ sf_column }})[[1]]))
-    x[[sf_column]] <- do.call(cartesian_lonlat, x[[sf_column]])
+    x$geometry <- do.call(cartesian_lonlat, x$geometry)
   } else {
     x <- dplyr::group_by(x, dplyr::pick({{ group }}))
     x <- dplyr::summarise(x, ..., geometry = do.call(planar_mean, dplyr::pick({{ sf_column }})[[1]]))
   }
-  
-  x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
+
+  x$geometry <- sf::st_as_sfc(sf::st_as_sf(x$geometry, coords = c("X", "Y"), crs = crs, na.fail = FALSE))
   x <- dplyr::ungroup(sf::st_as_sf(x))
 
   center_is_empty <- sf::st_is_empty(x)
   if (any(center_is_empty)) {
     chk::wrn(
-      "Empty point%s returned for %n group%s with zero total weight", 
+      "Empty point%s returned for %n group%s with zero total weight",
       n = sum(center_is_empty)
     )
   }

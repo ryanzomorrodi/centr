@@ -65,7 +65,7 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #' x <- sf::st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 #' x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
 #' median_center(x_transformed, group = "grp", weight = "wt")
-#' 
+#'
 #' x_transformed |>
 #'   dplyr::group_by(grp) |>
 #'   median_center(weight = "wt")
@@ -76,7 +76,7 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
   chk_only_allowed_sf(x)
   chk_not_na_crs(x)
   chk_is_not_lonlat(x)
-  
+
   if (!missing(group)) {
     chk::chk_character(group)
     chk_columns_exist(x, group)
@@ -106,18 +106,18 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
 
   x <- dplyr::group_by(x, dplyr::pick({{ group }}))
   x <- dplyr::summarise(
-    x, 
-    ..., 
+    x,
+    ...,
     geometry = do.call(planar_median, c(as.list(dplyr::pick({{ sf_column }})[[1]]), tol = tolerance))
   )
 
-  x[[sf_column]] <- sf::st_as_sfc(sf::st_as_sf(x[[sf_column]], coords = c("X", "Y"), crs = crs, na.fail = FALSE))
+  x$geometry <- sf::st_as_sfc(sf::st_as_sf(x$geometry, coords = c("X", "Y"), crs = crs, na.fail = FALSE))
   x <- dplyr::ungroup(sf::st_as_sf(x))
 
   center_is_empty <- sf::st_is_empty(x)
   if (any(center_is_empty)) {
     chk::wrn(
-      "Empty point%s returned for %n group%s with zero total weight", 
+      "Empty point%s returned for %n group%s with zero total weight",
       n = sum(center_is_empty)
     )
   }

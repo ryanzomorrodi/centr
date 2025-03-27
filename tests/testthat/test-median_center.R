@@ -50,3 +50,15 @@ test_that("median_center", {
     tolerance = 0.0001
   )
 })
+
+test_that("column not named geometry should still work", {
+  x_geom_col_proj <- x_proj
+  colnames(x_geom_col_proj)[colnames(x_geom_col_proj) == "geometry"] <- "geom"
+  st_geometry(x_geom_col_proj) <- "geom"
+
+  "projected"
+  expect_equal(
+    colnames(median_center(x_geom_col_proj, group = "grp", weight = "wts")),
+    c("grp", "geometry")
+  )
+})
