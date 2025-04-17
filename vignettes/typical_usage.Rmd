@@ -20,13 +20,27 @@ For this example we are going to be calculating the population weighted centroid
 
 ## Downloading Data
 We can download census population estimates and geographic layer files using the ever convenient `tidycensus` package. `sf` also has a North Carolina counties file, which we will use later, but you can always download census geometries directly from the census using `tigris`.
-```{r setup, results = 'hide', message = FALSE, warning = FALSE}
+```{r setup, eval = FALSE, results = 'hide', message = FALSE, warning = FALSE}
 library(centr)
 library(sf)
 library(tidycensus)
 
-NC_tracts <- get_decennial("tract", state = "NC", "P1_001N", year = 2020, geometry = TRUE)
-NC_counties <- st_read(system.file("shape/nc.shp", package = "sf")) 
+NC_tracts <- get_decennial(
+  "tract",
+  state = "NC",
+  "P1_001N",
+  year = 2020,
+  geometry = TRUE
+)
+NC_counties <- st_read(system.file("shape/nc.shp", package = "sf"))
+```
+
+```{r, include = FALSE}
+library(centr)
+library(sf)
+
+NC_tracts <- readRDS("files/nc_tracts.rds")
+NC_counties <- st_read(system.file("shape/nc.shp", package = "sf"))
 ```
 
 ## Setting Up
@@ -50,7 +64,11 @@ NC_tracts <- subset(NC_tracts, !st_is_empty(NC_tracts))
 ## Calculation Mean Centers
 Now, we can calculate our mean centers!
 ```{r}
-NC_county_means <- mean_center(NC_tracts, group = "GEOID_county", weight = "value")
+NC_county_means <- mean_center(
+  NC_tracts,
+  group = "GEOID_county",
+  weight = "value"
+)
 NC_county_means
 ```
 
@@ -75,7 +93,13 @@ Let's see how it looks.
 NC_counties_proj <- st_transform(NC_counties, crs = "EPSG:32119")
 
 plot(st_geometry(NC_counties_proj))
-plot(st_geometry(NC_county_medians), pch = 20, cex = 0.5, col = "red", add = TRUE)
+plot(
+  st_geometry(NC_county_medians),
+  pch = 20,
+  cex = 0.5,
+  col = "red",
+  add = TRUE
+)
 ```
 
 And that's the whole game, so go out and try it for yourself!

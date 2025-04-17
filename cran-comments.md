@@ -2,4 +2,7 @@
 
 0 errors | 0 warnings | 0 notes
 
-* Prior version vignette failures were caused by the momentary takedown of the Census FTP server. The FTP server is back up.
+* Prior versions' vignette failures were caused by an api 
+  call through `tidycensus`, but I have replaced the 
+  `tidycensus` call with a locally stored file, so that
+  should no longer be an issue.
