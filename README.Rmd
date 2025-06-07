@@ -58,9 +58,7 @@ mean_center(x, group = c("group1", "group2"), weight = "wt")
 Median center iteratively calculates the point that minimizes distance to all features. One can specify the groups to calculate individual centers for and weights for each individual point. It is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm) tool.
 
 ```{r median_example}
-x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
-
-median_center(x_transformed, group = c("group1", "group2"), weight = "wt")
+median_center(x, group = c("group1", "group2"), weight = "wt")
 ```
 
 Summaries of other attributes can be calculated by passing the summary
@@ -68,8 +66,8 @@ expressions to `...` just as in `dplyr::summarise()`.
 
 ```{r}
 mean_center(
-  x, 
-  group = c("group1", "group2"), 
+  x,
+  group = c("group1", "group2"),
   weight = "wt",
   total_weight = sum(wt)
 )

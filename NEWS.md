@@ -1,5 +1,8 @@
 # centr (development version)
 
+* Nelder-Mead is now used to calculate `median_center()`. This means that lon lat
+  centers are now able to calculated.
+
 # centr 0.2.4
 
 * `mean_center()` and `median_center()` now work even if the geometry column is not

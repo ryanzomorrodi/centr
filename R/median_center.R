@@ -1,38 +1,3 @@
-euclid_xy_dist <- function(X, Y, X_t, Y_t) {
-  dist <- sqrt((X - X_t)^2 + (Y - Y_t)^2)
-  dist[dist == 0] <- .Machine$double.eps
-
-  dist
-}
-
-planar_median_est <- function(X, Y, X_t, Y_t, wts = NULL) {
-  d_t <- euclid_xy_dist(X, Y, X_t, Y_t)
-  k_t <- wts / d_t
-
-  x_estimate <- sum(k_t * X) / sum(k_t)
-  y_estimate <- sum(k_t * Y) / sum(k_t)
-
-  list(X = x_estimate, Y = y_estimate)
-}
-
-planar_median <- function(X, Y, tol, wts = NULL) {
-  if (is.null(wts)) {
-    wts <- rep(1, length(X))
-  } else if (sum(wts) == 0) {
-    warning("Empty point returned for groups with zero total weight")
-    return(list(x = NA_real_, y = NA_real_))
-  }
-
-  estimate <- planar_mean(X, Y, wts)
-  new_estimate <- planar_median_est(X, Y, estimate$X, estimate$Y, wts)
-
-  while (any(abs(unlist(estimate) - unlist(new_estimate)) > tol)) {
-    estimate <- new_estimate
-    new_estimate <- planar_median_est(X, Y, estimate$X, estimate$Y, wts)
-  }
-  tibble::as_tibble(new_estimate)
-}
-
 #' Median Center
 #'
 #' @description
@@ -42,9 +7,6 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #' is analagous to the [ArcGIS Pro Median Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm)
 #' tool.
 #'
-#' It uses the methodology introduced by Kuhn and Kuenne (1962).
-#'
-#' Currently, median center is only implemenented for projected data.
 #' @param x Input POINT or POLYGON simple features
 #' @param group column name(s) specifying groups
 #'  to calculate individual mean centers for
@@ -70,12 +32,11 @@ planar_median <- function(X, Y, tol, wts = NULL) {
 #'   dplyr::group_by(grp) |>
 #'   median_center(weight = "wt")
 #' @export
-median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
+median_center <- function(x, group, weight, ...) {
   chk::chk_s3_class(x, "sf")
   chk_not_any_empty_sf(x)
   chk_only_allowed_sf(x)
   chk_not_na_crs(x)
-  chk_is_not_lonlat(x)
 
   if (!missing(group)) {
     chk::chk_character(group)
@@ -90,37 +51,66 @@ median_center <- function(x, group, weight, tolerance = 0.0001, ...) {
     chk::chk_not_any_na(x[[weight]])
     chk_not_any_infinite(x[[weight]])
     chk::chk_gte(x[[weight]], 0)
-  }
-
-  crs <- sf::st_crs(x)
-  coordinates <- suppressWarnings(sf::st_centroid(x)) |>
-    sf::st_coordinates() |>
-    tibble::as_tibble()
-  sf_column <- attr(x, "sf_column")
-  x <- tibble::tibble(x)
-  if (!missing(weight)) {
-    x[[sf_column]] <- dplyr::bind_cols(coordinates, wts = x[[weight]])
   } else {
-    x[[sf_column]] <- coordinates
+    weight <- NULL
   }
 
-  x <- dplyr::group_by(x, dplyr::pick({{ group }}))
-  x <- dplyr::summarise(
-    x,
-    ...,
-    geometry = do.call(planar_median, c(as.list(dplyr::pick({{ sf_column }})[[1]]), tol = tolerance))
-  )
+  is_lonlat <- sf::st_is_longlat(x)
+  crs <- sf::st_crs(x)
+  sf_column <- attr(x, "sf_column")
 
-  x$geometry <- sf::st_as_sfc(sf::st_as_sf(x$geometry, coords = c("X", "Y"), crs = crs, na.fail = FALSE))
-  x <- dplyr::ungroup(sf::st_as_sf(x))
+  centers <- x |>
+    sf::st_centroid() |>
+    suppressWarnings() |>
+    tibble::tibble() |>
+    dplyr::group_by(dplyr::pick({{ group }})) |>
+    dplyr::summarise(
+      geometry = {
+        coords <- .data[[sf_column]]
 
-  center_is_empty <- sf::st_is_empty(x)
+        coords <- if (is.null(weight)) {
+          median_center_sfc(coords)
+        } else {
+          median_center_sfc(coords, weight = .data[[weight]])
+        }
+
+        list(sf::st_point(coords))
+      },
+      ...
+    ) |>
+    dplyr::mutate(geometry = sf::st_as_sfc(geometry)) |>
+    sf::st_as_sf(crs = crs)
+
+  center_is_empty <- sf::st_is_empty(centers)
   if (any(center_is_empty)) {
     chk::wrn(
       "Empty point%s returned for %n group%s with zero total weight",
       n = sum(center_is_empty)
     )
   }
+  centers
+}
 
-  x
+criteria <- function(par, points, weight) {
+  distances <- sf::st_point(par) |>
+    sf::st_sfc(crs = sf::st_crs(points)) |>
+    sf::st_distance(points)
+
+  if (is.null(weight)) {
+    sum(distances)
+  } else {
+    sum(distances * weight)
+  }
+}
+
+median_center_sfc <- function(points, weight = NULL) {
+  if (!is.null(weight) & sum(weight) == 0) {
+    means <- c(X = NA_real_, Y = NA_real_)
+  } else {
+    means <- optim(
+      par = as.vector(mean_center_matrix(sf::st_coordinates(points))),
+      \(par) criteria(par, points, weight)
+    )$par
+  }
+  t(means)
 }

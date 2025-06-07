@@ -4,7 +4,7 @@
 \alias{median_center}
 \title{Median Center}
 \usage{
-median_center(x, group, weight, tolerance = 1e-04, ...)
+median_center(x, group, weight, ...)
 }
 \arguments{
 \item{x}{Input POINT or POLYGON simple features}
@@ -15,11 +15,11 @@ to calculate individual mean centers for}
 \item{weight}{name of numeric weight column specifying an
 individual point's contribution to the mean center}
 
+\item{...}{expressions passed to \code{dplyr::summarise()}}
+
 \item{tolerance}{numeric threshold determining when an
 estimate improvement is sufficiently small enough to stop
 iterating (smaller = slower, but more precision)}
-
-\item{...}{expressions passed to \code{dplyr::summarise()}}
 }
 \value{
 An sf object with a median center for each group
@@ -30,10 +30,6 @@ distance to all features. One can specify the groups to calculate
 individual centers for and weights for each individual point. It
 is analagous to the \href{https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm}{ArcGIS Pro Median Center}
 tool.
-
-It uses the methodology introduced by Kuhn and Kuenne (1962).
-
-Currently, median center is only implemenented for projected data.
 }
 \examples{
 df <- data.frame(

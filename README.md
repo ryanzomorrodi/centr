@@ -57,8 +57,9 @@ mean_center(x, group = c("group1", "group2"), weight = "wt")
 #> Bounding box:  xmin: 10 ymin: 27.58952 xmax: 65.92087 ymax: 63.32603
 #> Geodetic CRS:  WGS 84
 #> # A tibble: 3 × 3
+#> # Groups:   group1 [2]
 #>   group1 group2            geometry
-#>   <chr>   <dbl>         <POINT [°]>
+#> * <chr>   <dbl>         <POINT [°]>
 #> 1 a           1 (24.88607 27.58952)
 #> 2 a           2             (10 30)
 #> 3 b           1 (65.92087 63.32603)
@@ -72,20 +73,19 @@ Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statisti
 tool.
 
 ``` r
-x_transformed <- sf::st_transform(x, crs = "ESRI:102003")
-
-median_center(x_transformed, group = c("group1", "group2"), weight = "wt")
+median_center(x, group = c("group1", "group2"), weight = "wt")
 #> Simple feature collection with 3 features and 2 fields
 #> Geometry type: POINT
 #> Dimension:     XY
-#> Bounding box:  xmin: 4950281 ymin: 4293605 xmax: 9003834 ymax: 8151342
-#> Projected CRS: USA_Contiguous_Albers_Equal_Area_Conic
+#> Bounding box:  xmin: 10 ymin: 27.96116 xmax: 50 ymax: 70
+#> Geodetic CRS:  WGS 84
 #> # A tibble: 3 × 3
-#>   group1 group2          geometry
-#>   <chr>   <dbl>       <POINT [m]>
-#> 1 a           1 (9003834 5545860)
-#> 2 a           2 (8226081 4293605)
-#> 3 b           1 (4950281 8151342)
+#> # Groups:   group1 [2]
+#>   group1 group2            geometry
+#> * <chr>   <dbl>         <POINT [°]>
+#> 1 a           1 (25.63316 27.96116)
+#> 2 a           2             (10 30)
+#> 3 b           1             (50 70)
 ```
 
 Summaries of other attributes can be calculated by passing the summary
@@ -93,8 +93,8 @@ expressions to `...` just as in `dplyr::summarise()`.
 
 ``` r
 mean_center(
-  x, 
-  group = c("group1", "group2"), 
+  x,
+  group = c("group1", "group2"),
   weight = "wt",
   total_weight = sum(wt)
 )
@@ -104,9 +104,10 @@ mean_center(
 #> Bounding box:  xmin: 10 ymin: 27.58952 xmax: 65.92087 ymax: 63.32603
 #> Geodetic CRS:  WGS 84
 #> # A tibble: 3 × 4
-#>   group1 group2 total_weight            geometry
-#>   <chr>   <dbl>        <dbl>         <POINT [°]>
-#> 1 a           1            2 (24.88607 27.58952)
-#> 2 a           2            2             (10 30)
-#> 3 b           1            8 (65.92087 63.32603)
+#> # Groups:   group1 [2]
+#>   group1 group2            geometry total_weight
+#> * <chr>   <dbl>         <POINT [°]>        <dbl>
+#> 1 a           1 (24.88607 27.58952)            2
+#> 2 a           2             (10 30)            2
+#> 3 b           1 (65.92087 63.32603)            8
 ```

@@ -1,50 +1,3 @@
-cartesian_mean <- function(x, y, z, wts = NULL) {
-  if (is.null(wts)) {
-    total <- length(x)
-
-    x_mean <- sum(x) / total
-    y_mean <- sum(y) / total
-    z_mean <- sum(z) / total
-  } else if (sum(wts) == 0) {
-    x_mean <- NA
-    y_mean <- NA
-    z_mean <- NA
-  } else {
-    total <- sum(wts)
-
-    x_mean <- sum(x * wts) / total
-    y_mean <- sum(y * wts) / total
-    z_mean <- sum(z * wts) / total
-  }
-
-  l <- sqrt(sum((c(x_mean, y_mean, z_mean))^2))
-
-  surface_x_mean <- x_mean / l
-  surface_y_mean <- y_mean / l
-  surface_z_mean <- z_mean / l
-
-  tibble::tibble(x = surface_x_mean, y = surface_y_mean, z = surface_z_mean)
-}
-
-planar_mean <- function(X, Y, wts = NULL) {
-  if (is.null(wts)) {
-    total <- length(X)
-
-    x_mean <- sum(X) / total
-    y_mean <- sum(Y) / total
-  } else if (sum(wts) == 0) {
-    x_mean <- NA
-    y_mean <- NA
-  } else {
-    total <- sum(wts)
-
-    x_mean <- sum(X * wts) / total
-    y_mean <- sum(Y * wts) / total
-  }
-
-  tibble::tibble(X = x_mean, Y = y_mean)
-}
-
 #' Mean Center
 #'
 #' @description
@@ -97,41 +50,86 @@ mean_center <- function(x, group, weight, ...) {
     chk::chk_not_any_na(x[[weight]])
     chk_not_any_infinite(x[[weight]])
     chk::chk_gte(x[[weight]], 0)
+  } else {
+    weight <- NULL
   }
 
   is_lonlat <- sf::st_is_longlat(x)
   crs <- sf::st_crs(x)
-  coordinates <- suppressWarnings(sf::st_centroid(x)) |>
-    sf::st_coordinates() |>
-    tibble::as_tibble()
   sf_column <- attr(x, "sf_column")
-  x <- tibble::tibble(x)
-  if (!missing(weight)) {
-    x[[sf_column]] <- dplyr::bind_cols(coordinates, wts = x[[weight]])
-  } else {
-    x[[sf_column]] <- coordinates
-  }
 
-  if (is_lonlat) {
-    x[[sf_column]] <- do.call(lonlat_cartesian, x[[sf_column]])
-    x <- dplyr::group_by(x, dplyr::pick({{ group }}))
-    x <- dplyr::summarise(x, ..., geometry = do.call(cartesian_mean, dplyr::pick({{ sf_column }})[[1]]))
-    x$geometry <- do.call(cartesian_lonlat, x$geometry)
-  } else {
-    x <- dplyr::group_by(x, dplyr::pick({{ group }}))
-    x <- dplyr::summarise(x, ..., geometry = do.call(planar_mean, dplyr::pick({{ sf_column }})[[1]]))
-  }
+  centers <- x |>
+    sf::st_centroid() |>
+    suppressWarnings() |>
+    tibble::tibble() |>
+    dplyr::mutate(!!sf_column := sf::st_coordinates(.data[[sf_column]])) |>
+    dplyr::group_by(dplyr::pick({{ group }})) |>
+    dplyr::summarise(
+      geometry = {
+        coords <- .data[[sf_column]]
+        coords <- if (is_lonlat) lonlat_cartesian(coords) else coords
 
-  x$geometry <- sf::st_as_sfc(sf::st_as_sf(x$geometry, coords = c("X", "Y"), crs = crs, na.fail = FALSE))
-  x <- dplyr::ungroup(sf::st_as_sf(x))
+        coords <- if (is.null(weight)) {
+          mean_center_matrix(coords)
+        } else {
+          mean_center_matrix(coords, weight = .data[[weight]])
+        }
 
-  center_is_empty <- sf::st_is_empty(x)
+        coords <- if (is_lonlat) cartesian_lonlat(coords) else coords
+        list(sf::st_point(coords))
+      },
+      ...
+    ) |>
+    dplyr::mutate(geometry = sf::st_as_sfc(geometry)) |>
+    sf::st_as_sf(crs = crs)
+
+  center_is_empty <- sf::st_is_empty(centers)
   if (any(center_is_empty)) {
     chk::wrn(
       "Empty point%s returned for %n group%s with zero total weight",
       n = sum(center_is_empty)
     )
   }
+  centers
+}
 
-  x
+mean_center_matrix <- function(points, weight = NULL) {
+  if (is.null(weight)) {
+    means <- colMeans(points)
+  } else if (sum(weight) == 0) {
+    means <- c(X = NA_real_, Y = NA_real_, Z = NA_real_)
+  } else {
+    means <- colSums(points * (weight / sum(weight)))
+  }
+  if (length(means) == 3) {
+    means <- means / sqrt(sum(means^2))
+  }
+
+  t(means)
+}
+
+lonlat_cartesian <- function(points) {
+  phi <- ((90 - points[, 2]) * pi) / 180
+  theta <- (points[, 1] * pi) / 180
+
+  x_cart <- sin(phi) * cos(theta)
+  y_cart <- sin(phi) * sin(theta)
+  z_cart <- cos(phi)
+
+  cbind(X = x_cart, Y = y_cart, Z = z_cart)
+}
+
+cartesian_lonlat <- function(points) {
+  lat <- 90 - ((180 * acos(points[, 3])) / pi)
+  lon <- ifelse(
+    points[, 1] > 0,
+    atan(points[, 2] / points[, 1]) * (180 / pi),
+    ifelse(
+      points[, 2] > 0,
+      atan(points[, 2] / points[, 1]) * (180 / pi) + 180,
+      atan(points[, 2] / points[, 1]) * (180 / pi) - 180
+    )
+  )
+
+  cbind(X = lon, Y = lat)
 }
