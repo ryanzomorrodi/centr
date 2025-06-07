@@ -17,6 +17,7 @@ Imports:
     chk,
     dplyr,
     sf,
+    stats,
     tibble
 URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centr
 Suggests: 

@@ -12,9 +12,6 @@
 #'  to calculate individual mean centers for
 #' @param weight name of numeric weight column specifying an
 #'  individual point's contribution to the mean center
-#' @param tolerance numeric threshold determining when an
-#'  estimate improvement is sufficiently small enough to stop
-#'  iterating (smaller = slower, but more precision)
 #' @param ... expressions passed to `dplyr::summarise()`
 #' @returns An sf object with a median center for each group
 #' @examples
@@ -65,7 +62,7 @@ median_center <- function(x, group, weight, ...) {
     tibble::tibble() |>
     dplyr::group_by(dplyr::pick({{ group }})) |>
     dplyr::summarise(
-      geometry = {
+      "geometry" = {
         coords <- .data[[sf_column]]
 
         coords <- if (is.null(weight)) {
@@ -78,7 +75,7 @@ median_center <- function(x, group, weight, ...) {
       },
       ...
     ) |>
-    dplyr::mutate(geometry = sf::st_as_sfc(geometry)) |>
+    dplyr::mutate("geometry" = sf::st_as_sfc(.data[["geometry"]])) |>
     sf::st_as_sf(crs = crs)
 
   center_is_empty <- sf::st_is_empty(centers)
@@ -107,7 +104,7 @@ median_center_sfc <- function(points, weight = NULL) {
   if (!is.null(weight) & sum(weight) == 0) {
     means <- c(X = NA_real_, Y = NA_real_)
   } else {
-    means <- optim(
+    means <- stats::optim(
       par = as.vector(mean_center_matrix(sf::st_coordinates(points))),
       \(par) criteria(par, points, weight)
     )$par

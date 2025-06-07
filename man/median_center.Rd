@@ -16,10 +16,6 @@ to calculate individual mean centers for}
 individual point's contribution to the mean center}
 
 \item{...}{expressions passed to \code{dplyr::summarise()}}
-
-\item{tolerance}{numeric threshold determining when an
-estimate improvement is sufficiently small enough to stop
-iterating (smaller = slower, but more precision)}
 }
 \value{
 An sf object with a median center for each group

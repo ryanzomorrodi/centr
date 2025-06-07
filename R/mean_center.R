@@ -65,7 +65,7 @@ mean_center <- function(x, group, weight, ...) {
     dplyr::mutate(!!sf_column := sf::st_coordinates(.data[[sf_column]])) |>
     dplyr::group_by(dplyr::pick({{ group }})) |>
     dplyr::summarise(
-      geometry = {
+      "geometry" = {
         coords <- .data[[sf_column]]
         coords <- if (is_lonlat) lonlat_cartesian(coords) else coords
 
@@ -80,7 +80,7 @@ mean_center <- function(x, group, weight, ...) {
       },
       ...
     ) |>
-    dplyr::mutate(geometry = sf::st_as_sfc(geometry)) |>
+    dplyr::mutate("geometry" = sf::st_as_sfc(.data[["geometry"]])) |>
     sf::st_as_sf(crs = crs)
 
   center_is_empty <- sf::st_is_empty(centers)
