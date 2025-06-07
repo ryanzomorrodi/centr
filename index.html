@@ -6,19 +6,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Weighted and Unweighted Spatial Centers • centr</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Weighted and Unweighted Spatial Centers">
-<meta name="description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro. Median center methodology based off of Kuhn and Kuenne (1962) &lt;doi:10.1111/j.1467-9787.1962.tb00902.x&gt;.">
-<meta property="og:description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro. Median center methodology based off of Kuhn and Kuenne (1962) &lt;doi:10.1111/j.1467-9787.1962.tb00902.x&gt;.">
+<meta name="description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro.">
+<meta property="og:description" content="Generate mean and median weighted or unweighted spatial centers. Functions are analogous to their identically named counterparts within ArcGIS Pro.">
 <meta property="og:image" content="https://ryanzomorrodi.github.io/centr/logo.png">
 </head>
 <body>
@@ -29,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">centr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,32 +100,32 @@
 <span><span class="co">#&gt; Bounding box:  xmin: 10 ymin: 27.58952 xmax: 65.92087 ymax: 63.32603</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt; # Groups:   group1 [2]</span></span>
 <span><span class="co">#&gt;   group1 group2            geometry</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt;         &lt;POINT [°]&gt;</span></span>
+<span><span class="co">#&gt; * &lt;chr&gt;   &lt;dbl&gt;         &lt;POINT [°]&gt;</span></span>
 <span><span class="co">#&gt; 1 a           1 (24.88607 27.58952)</span></span>
 <span><span class="co">#&gt; 2 a           2             (10 30)</span></span>
 <span><span class="co">#&gt; 3 b           1 (65.92087 63.32603)</span></span></code></pre></div>
 <p>Median center iteratively calculates the point that minimizes distance to all features. One can specify the groups to calculate individual centers for and weights for each individual point. It is analagous to the <a href="https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/median-center.htm" class="external-link">ArcGIS Pro Median Center</a> tool.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x_transformed</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">x</span>, crs <span class="op">=</span> <span class="st">"ESRI:102003"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/median_center.html">median_center</a></span><span class="op">(</span><span class="va">x_transformed</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group1"</span>, <span class="st">"group2"</span><span class="op">)</span>, weight <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/median_center.html">median_center</a></span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group1"</span>, <span class="st">"group2"</span><span class="op">)</span>, weight <span class="op">=</span> <span class="st">"wt"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 3 features and 2 fields</span></span>
 <span><span class="co">#&gt; Geometry type: POINT</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 4950281 ymin: 4293605 xmax: 9003834 ymax: 8151342</span></span>
-<span><span class="co">#&gt; Projected CRS: USA_Contiguous_Albers_Equal_Area_Conic</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 10 ymin: 27.96116 xmax: 50 ymax: 70</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
-<span><span class="co">#&gt;   group1 group2          geometry</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt;       &lt;POINT [m]&gt;</span></span>
-<span><span class="co">#&gt; 1 a           1 (9003834 5545860)</span></span>
-<span><span class="co">#&gt; 2 a           2 (8226081 4293605)</span></span>
-<span><span class="co">#&gt; 3 b           1 (4950281 8151342)</span></span></code></pre></div>
+<span><span class="co">#&gt; # Groups:   group1 [2]</span></span>
+<span><span class="co">#&gt;   group1 group2            geometry</span></span>
+<span><span class="co">#&gt; * &lt;chr&gt;   &lt;dbl&gt;         &lt;POINT [°]&gt;</span></span>
+<span><span class="co">#&gt; 1 a           1 (25.63316 27.96116)</span></span>
+<span><span class="co">#&gt; 2 a           2             (10 30)</span></span>
+<span><span class="co">#&gt; 3 b           1             (50 70)</span></span></code></pre></div>
 <p>Summaries of other attributes can be calculated by passing the summary expressions to <code>...</code> just as in <code><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">dplyr::summarise()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/mean_center.html">mean_center</a></span><span class="op">(</span></span>
-<span>  <span class="va">x</span>, </span>
-<span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group1"</span>, <span class="st">"group2"</span><span class="op">)</span>, </span>
+<span>  <span class="va">x</span>,</span>
+<span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group1"</span>, <span class="st">"group2"</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="st">"wt"</span>,</span>
 <span>  total_weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -136,11 +135,12 @@
 <span><span class="co">#&gt; Bounding box:  xmin: 10 ymin: 27.58952 xmax: 65.92087 ymax: 63.32603</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
-<span><span class="co">#&gt;   group1 group2 total_weight            geometry</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;   &lt;dbl&gt;        &lt;dbl&gt;         &lt;POINT [°]&gt;</span></span>
-<span><span class="co">#&gt; 1 a           1            2 (24.88607 27.58952)</span></span>
-<span><span class="co">#&gt; 2 a           2            2             (10 30)</span></span>
-<span><span class="co">#&gt; 3 b           1            8 (65.92087 63.32603)</span></span></code></pre></div>
+<span><span class="co">#&gt; # Groups:   group1 [2]</span></span>
+<span><span class="co">#&gt;   group1 group2            geometry total_weight</span></span>
+<span><span class="co">#&gt; * &lt;chr&gt;   &lt;dbl&gt;         &lt;POINT [°]&gt;        &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 a           1 (24.88607 27.58952)            2</span></span>
+<span><span class="co">#&gt; 2 a           2             (10 30)            2</span></span>
+<span><span class="co">#&gt; 3 b           1 (65.92087 63.32603)            8</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -171,7 +171,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Ryan Zomorrodi <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0009-0003-6417-5985" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ryan Zomorrodi <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0009-0003-6417-5985" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -194,7 +194,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

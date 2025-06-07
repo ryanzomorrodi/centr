@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Typical Usage • centr</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">centr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,7 +141,7 @@ filter out empty geometries.</p>
 <span><span class="co">#&gt; Geodetic CRS:  NAD83</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 2</span></span></span>
 <span><span class="co">#&gt;    GEOID_county             geometry</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;POINT [°]&gt;</span></span></span>
+<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;POINT [°]&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 37001        (-79.41359 36.07104)</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 37003        (-81.19492 35.88941)</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 37005        (-81.10783 36.49819)</span></span>
@@ -164,39 +163,36 @@ filter out empty geometries.</p>
 <h2 id="calculating-median-centers">Calculating Median Centers<a class="anchor" aria-label="anchor" href="#calculating-median-centers"></a>
 </h2>
 <p>We can also calculate median centers, which is the point that
-minimizes distance to all geometries. <code><a href="../reference/median_center.html">median_center()</a></code> only
-supports projected coordinates, so let’s project to the North Carolina
-state plane.</p>
+minimizes distance to all geometries.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NC_tracts_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">NC_tracts</span>, crs <span class="op">=</span> <span class="st">"EPSG:32119"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">NC_county_medians</span> <span class="op">&lt;-</span> <span class="va">NC_tracts_proj</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/median_center.html">median_center</a></span><span class="op">(</span>group <span class="op">=</span> <span class="st">"GEOID_county"</span>, weight <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">NC_county_medians</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/median_center.html">median_center</a></span><span class="op">(</span></span>
+<span>  <span class="va">NC_tracts</span>,</span>
+<span>  group <span class="op">=</span> <span class="st">"GEOID_county"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"value"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="va">NC_county_medians</span></span>
 <span><span class="co">#&gt; Simple feature collection with 100 features and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POINT</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 152678.1 ymin: 30541.25 xmax: 908546.1 ymax: 309372.5</span></span>
-<span><span class="co">#&gt; Projected CRS: NAD83 / North Carolina</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -84.01418 ymin: 34.02256 xmax: -75.6836 ymax: 36.52039</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  NAD83</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 2</span></span></span>
-<span><span class="co">#&gt;    GEOID_county            geometry</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;POINT [m]&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 37001        (571361.8 258461.8)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 37003        (411766.7 239170.4)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 37005        (419809.1 309372.5)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 37007        (509749.3 136238.7)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 37009          (385734.1 298869)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 37011        (344627.9 264143.7)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 37013        (792026.9 199744.2)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 37015        (795178.3 256677.5)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 37017        (642697.8 96331.03)</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 37019        (683996.6 30541.25)</span></span>
+<span><span class="co">#&gt;    GEOID_county             geometry</span></span>
+<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;POINT [°]&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 37001        (-79.42453 36.07912)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 37003        (-81.19136 35.88628)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 37005        (-81.11889 36.52039)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 37007         (-80.09359 34.9732)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 37009         (-81.49626 36.4186)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 37011         (-81.94286 36.0956)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 37013        (-76.98811 35.53398)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 37015        (-76.94037 36.04655)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 37017        (-78.63911 34.61783)</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 37019        (-78.19474 34.02256)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span></code></pre></div>
 <p>Let’s see how it looks.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NC_counties_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">NC_counties</span>, crs <span class="op">=</span> <span class="st">"EPSG:32119"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">NC_counties_proj</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">NC_counties</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">NC_county_medians</span><span class="op">)</span>,</span>
 <span>  pch <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -218,7 +214,7 @@ state plane.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
