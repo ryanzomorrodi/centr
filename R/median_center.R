@@ -30,24 +30,29 @@
 #'   median_center(weight = "wt")
 #' @export
 median_center <- function(x, group, weight, ...) {
-  chk::chk_s3_class(x, "sf")
-  chk_not_any_empty_sf(x)
-  chk_only_allowed_sf(x)
-  chk_not_na_crs(x)
+  check_sf(
+    x,
+    allow_empty = FALSE,
+    allow_na_crs = FALSE,
+    allow_geom_type = c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
+  )
 
   if (!missing(group)) {
-    chk::chk_character(group)
-    chk_columns_exist(x, group)
+    check_character(group)
+    check_column_exists(x, group)
   } else {
     group <- dplyr::group_cols(data = x)
   }
   if (!missing(weight)) {
-    chk::chk_string(weight)
-    chk_columns_exist(x, weight)
-    chk::chk_numeric(x[[weight]])
-    chk::chk_not_any_na(x[[weight]])
-    chk_not_any_infinite(x[[weight]])
-    chk::chk_gte(x[[weight]], 0)
+    check_string(weight)
+    check_column_exists(x, weight)
+    check_numeric(
+      x[[weight]],
+      min = 0,
+      allow_infinite = FALSE,
+      allow_na = FALSE,
+      allow_null = FALSE
+    )
   } else {
     weight <- NULL
   }
@@ -79,12 +84,6 @@ median_center <- function(x, group, weight, ...) {
     sf::st_as_sf(crs = crs)
 
   center_is_empty <- sf::st_is_empty(centers)
-  if (any(center_is_empty)) {
-    chk::wrn(
-      "Empty point%s returned for %n group%s with zero total weight",
-      n = sum(center_is_empty)
-    )
-  }
   centers
 }
 
