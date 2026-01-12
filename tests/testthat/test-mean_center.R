@@ -58,7 +58,7 @@ test_that("group checks", {
   expect_no_error(mean_center(x, c("grp", "wts")))
 })
 
-test_that("default behavior", {
+test_that("From column - default behavior", {
   "unprojected"
   expect_equal(
     sf::st_coordinates(mean_center(x)),
@@ -72,7 +72,7 @@ test_that("default behavior", {
   )
 })
 
-test_that("weighted behavior", {
+test_that("From column - weighted behavior", {
   "unprojected"
   expect_equal(
     sf::st_coordinates(mean_center(x, weight = "wts")),
@@ -86,7 +86,7 @@ test_that("weighted behavior", {
   )
 })
 
-test_that("group behavior", {
+test_that("From column - group behavior", {
   "unprojected"
   expect_equal(
     sf::st_coordinates(mean_center(x, group = "grp")),
@@ -100,7 +100,7 @@ test_that("group behavior", {
   )
 })
 
-test_that("weights and group behavior", {
+test_that("From column - weights and group behavior", {
   "unprojected"
   expect_equal(
     sf::st_coordinates(mean_center(x, group = "grp", weight = "wts")),
@@ -114,7 +114,7 @@ test_that("weights and group behavior", {
   )
 })
 
-test_that("column not named geometry should still work", {
+test_that("From column - column not named geometry should still work", {
   x_geom_col <- x
   colnames(x_geom_col)[colnames(x_geom_col) == "geometry"] <- "geom"
   sf::st_geometry(x_geom_col) <- "geom"
@@ -131,7 +131,45 @@ test_that("column not named geometry should still work", {
 
   "projected"
   expect_equal(
-    sf::st_coordinates(mean_center(x_geom_col_proj, group = "grp", weight = "wts")),
+    sf::st_coordinates(mean_center(
+      x_geom_col_proj,
+      group = "grp",
+      weight = "wts"
+    )),
     sf::st_coordinates(sf::st_centroid(x_rep_grp_proj))
+  )
+})
+
+# these are terrible tests, but at least for now this shouldn't error out
+test_that("From raster - weighted", {
+  testthat::skip_if_not_installed("terra")
+  testthat::skip_if_not_installed("exactextractr")
+
+  pop_count_raster <- terra::rast(
+    system.file(
+      'sao_miguel/gpw_v411_2020_count_2020.tif',
+      package = 'exactextractr'
+    )
+  )
+
+  concelhos_sf <- sf::st_read(
+    system.file(
+      'sao_miguel/concelhos.gpkg',
+      package = 'exactextractr'
+    ),
+    quiet = TRUE
+  )
+  concelhos_sf$grp <- 1:2
+
+  "grouped"
+  expect_equal(
+    nrow(mean_center(concelhos_sf, group = "grp", weight = pop_count_raster)),
+    2
+  )
+
+  "ungrouped"
+  expect_equal(
+    nrow(mean_center(concelhos_sf, weight = pop_count_raster)),
+    1
   )
 })

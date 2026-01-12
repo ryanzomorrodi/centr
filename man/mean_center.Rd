@@ -13,7 +13,9 @@ mean_center(x, group, weight, ...)
 to calculate individual mean centers for}
 
 \item{weight}{name of numeric weight column specifying an
-individual point's contribution to the mean center}
+individual point's contribution to the mean center OR a
+single layer SpatRaster whose pixels represent contributions
+to the mean center.}
 
 \item{...}{expressions passed to \code{dplyr::summarise()}}
 }

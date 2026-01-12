@@ -15,14 +15,17 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     dplyr,
+    methods,
     rlang,
     sf,
     stats,
     tibble
 URL: https://ryanzomorrodi.github.io/centr/, https://github.com/ryanzomorrodi/centr
 Suggests: 
+    exactextractr,
     knitr,
     rmarkdown,
+    terra,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 BugReports: https://github.com/ryanzomorrodi/centR/issues

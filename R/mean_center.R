@@ -14,7 +14,9 @@
 #' @param group column name(s) specifying groups
 #'  to calculate individual mean centers for
 #' @param weight name of numeric weight column specifying an
-#'  individual point's contribution to the mean center
+#'  individual point's contribution to the mean center OR a
+#'  single layer SpatRaster whose pixels represent contributions
+#'  to the mean center.
 #' @param ... expressions passed to `dplyr::summarise()`
 #' @returns An sf object with a mean center for each group
 #' @examples
@@ -38,97 +40,54 @@ mean_center <- function(x, group, weight, ...) {
     allow_na_crs = FALSE,
     allow_geom_type = c("POINT", "POLYGON", "MULTIPOINT", "MULTIPOLYGON")
   )
-
   if (!missing(group)) {
     check_character(group)
-    check_column_exists(x, group)
+    for (grp in group) {
+      check_column_exists(x, grp, column_name_arg = grp)
+    }
   } else {
     group <- dplyr::group_cols(data = x)
   }
-  if (!missing(weight)) {
-    check_string(weight)
-    check_column_exists(x, weight)
-    check_numeric(
-      x[[weight]],
-      min = 0,
-      allow_infinite = FALSE,
-      allow_na = FALSE,
-      allow_null = FALSE
-    )
-  } else {
+  if (missing(weight)) {
     weight <- NULL
-  }
-
-  is_lonlat <- sf::st_is_longlat(x)
-  crs <- sf::st_crs(x)
-  sf_column <- attr(x, "sf_column")
-
-  centers <- x |>
-    sf::st_centroid() |>
-    suppressWarnings() |>
-    tibble::tibble() |>
-    dplyr::mutate(!!sf_column := sf::st_coordinates(.data[[sf_column]])) |>
-    dplyr::group_by(dplyr::pick({{ group }})) |>
-    dplyr::summarise(
-      ...,
-      "geometry" = {
-        coords <- .data[[sf_column]]
-        coords <- if (is_lonlat) lonlat_cartesian(coords) else coords
-
-        coords <- if (is.null(weight)) {
-          mean_center_matrix(coords)
-        } else {
-          mean_center_matrix(coords, weight = .data[[weight]])
-        }
-
-        coords <- if (is_lonlat) cartesian_lonlat(coords) else coords
-        list(sf::st_point(coords))
-      }
-    ) |>
-    dplyr::mutate("geometry" = sf::st_as_sfc(.data[["geometry"]])) |>
-    sf::st_as_sf(crs = crs)
-
-  center_is_empty <- sf::st_is_empty(centers)
-  centers
-}
-
-mean_center_matrix <- function(points, weight = NULL) {
-  if (is.null(weight)) {
-    means <- colMeans(points)
-  } else if (sum(weight) == 0) {
-    means <- c(X = NA_real_, Y = NA_real_, Z = NA_real_)
   } else {
-    means <- colSums(points * (weight / sum(weight)))
-  }
-  if (length(means) == 3) {
-    means <- means / sqrt(sum(means^2))
+    check_is_string_or_raster(weight)
   }
 
-  t(means)
-}
-
-lonlat_cartesian <- function(points) {
-  phi <- ((90 - points[, 2]) * pi) / 180
-  theta <- (points[, 1] * pi) / 180
-
-  x_cart <- sin(phi) * cos(theta)
-  y_cart <- sin(phi) * sin(theta)
-  z_cart <- cos(phi)
-
-  cbind(X = x_cart, Y = y_cart, Z = z_cart)
-}
-
-cartesian_lonlat <- function(points) {
-  lat <- 90 - ((180 * acos(points[, 3])) / pi)
-  lon <- ifelse(
-    points[, 1] > 0,
-    atan(points[, 2] / points[, 1]) * (180 / pi),
-    ifelse(
-      points[, 2] > 0,
-      atan(points[, 2] / points[, 1]) * (180 / pi) + 180,
-      atan(points[, 2] / points[, 1]) * (180 / pi) - 180
+  result <- if (methods::is(weight, "SpatRaster")) {
+    is_installed("terra")
+    is_installed("exactextractr")
+    check_raster(
+      weight,
+      allow_multilayer = FALSE,
+      allow_non_numeric = FALSE
     )
-  )
+    check_identical_crs(x, weight)
 
-  cbind(X = lon, Y = lat)
+    mean_center_from_raster(x, group, weight, ...)
+  } else {
+    if (is_string(weight)) {
+      check_column_exists(x, weight)
+      check_numeric(
+        x[[weight]],
+        min = 0,
+        allow_infinite = FALSE,
+        allow_na = FALSE,
+        allow_null = FALSE
+      )
+    }
+    mean_center_from_col(x, group, weight, ...)
+  }
+
+  center_is_empty <- sf::st_is_empty(result)
+  if (any(center_is_empty)) {
+    warning(
+      sprintf(
+        "Empty point returned for %s groups with 0 total weight.",
+        sum(center_is_empty)
+      )
+    )
+  }
+
+  result
 }

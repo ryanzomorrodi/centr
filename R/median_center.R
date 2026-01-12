@@ -61,11 +61,11 @@ median_center <- function(x, group, weight, ...) {
   crs <- sf::st_crs(x)
   sf_column <- attr(x, "sf_column")
 
-  centers <- x |>
+  result <- x |>
     sf::st_centroid() |>
     suppressWarnings() |>
     tibble::tibble() |>
-    dplyr::group_by(dplyr::pick({{ group }})) |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(group))) |>
     dplyr::summarise(
       "geometry" = {
         coords <- .data[[sf_column]]
@@ -83,8 +83,17 @@ median_center <- function(x, group, weight, ...) {
     dplyr::mutate("geometry" = sf::st_as_sfc(.data[["geometry"]])) |>
     sf::st_as_sf(crs = crs)
 
-  center_is_empty <- sf::st_is_empty(centers)
-  centers
+  center_is_empty <- sf::st_is_empty(result)
+  if (any(center_is_empty)) {
+    warning(
+      sprintf(
+        "Empty point returned for %s groups with 0 total weight.",
+        sum(center_is_empty)
+      )
+    )
+  }
+
+  result
 }
 
 criteria <- function(par, points, weight) {

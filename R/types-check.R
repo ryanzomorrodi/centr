@@ -41,7 +41,7 @@ check_sf <- function(
 
   stop_input_type(
     x,
-    "an <sf> object",
+    "a <sf> object",
     ...,
     arg = arg,
     call = call
@@ -114,15 +114,90 @@ check_column_exists <- function(
   ...,
   x_arg = caller_arg(x),
   column_name_arg = caller_arg(column_name),
-  call = call
+  call = caller_env()
 ) {
   if (missing(x) || !is.data.frame(x)) {
     return(invisible(NULL))
   }
 
-  if (!(column_name %in% names(x))) {
+  if (!missing(column_name) && !(column_name %in% names(x))) {
     abort(
       sprintf("Can't find `%s` column in `%s`.", column_name_arg, x_arg),
+      call = call
+    )
+  }
+}
+
+check_raster <- function(
+  x,
+  allow_multilayer = FALSE,
+  allow_non_numeric = FALSE,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
+  if (!missing(x)) {
+    if (methods::is(x, "SpatRaster")) {
+      if (!allow_multilayer && terra::nlyr(x) != 1) {
+        abort(
+          sprintf("`%s` can't have multiple layers.", arg),
+          arg = arg,
+          call = call
+        )
+      }
+      if (!allow_non_numeric && !is.numeric(terra::values(x))) {
+        abort(
+          sprintf("`%s` must have numeric values.", arg),
+          arg = arg,
+          call = call
+        )
+      }
+
+      return(invisible(NULL))
+    }
+  }
+
+  stop_input_type(
+    x,
+    "a <SpatRaster> object",
+    ...,
+    arg = arg,
+    call = call
+  )
+}
+
+check_is_string_or_raster <- function(
+  x,
+  ...,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
+  if (!missing(x) && !is_string(x) && !methods::is(x, "SpatRaster")) {
+    stop_input_type(
+      x,
+      "a single string or <SpatRaster> object",
+      ...,
+      arg = arg,
+      call = call
+    )
+  }
+}
+
+check_identical_crs <- function(
+  x,
+  y,
+  ...,
+  x_arg = caller_arg(y),
+  y_arg = caller_arg(x),
+  call = caller_env()
+) {
+  if (missing(x) || missing(y)) {
+    return(invisible(NULL))
+  }
+
+  if (sf::st_crs(x) != sf::st_crs(y)) {
+    abort(
+      sprintf("`%s` and `%s` must have the same crs.", x_arg, y_arg),
       call = call
     )
   }
