@@ -5,6 +5,9 @@
 - Nelder-Mead is now used to calculate
   [`median_center()`](https://ryanzomorrodi.github.io/centr/reference/median_center.md).
   This means that lon lat centers are now able to calculated.
+- [`mean_center()`](https://ryanzomorrodi.github.io/centr/reference/mean_center.md)
+  accepts a `SpatRaster` weight argument to support raster-weighted
+  centroids.
 
 ## centr 0.2.4
 
