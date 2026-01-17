@@ -26,7 +26,10 @@ Suggests:
     knitr,
     rmarkdown,
     terra,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidycensus,
+    tigris,
+    tmap
 Config/testthat/edition: 3
 BugReports: https://github.com/ryanzomorrodi/centR/issues
 VignetteBuilder: knitr
