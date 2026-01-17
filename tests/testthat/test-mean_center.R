@@ -140,36 +140,91 @@ test_that("From column - column not named geometry should still work", {
   )
 })
 
-# these are terrible tests, but at least for now this shouldn't error out
 test_that("From raster - weighted", {
   testthat::skip_if_not_installed("terra")
   testthat::skip_if_not_installed("exactextractr")
 
-  pop_count_raster <- terra::rast(
-    system.file(
-      'sao_miguel/gpw_v411_2020_count_2020.tif',
-      package = 'exactextractr'
+  # 5x5 unit raster of random values
+  matrix_weights <- matrix(1:25, nrow = 5, ncol = 5)
+  raster_weights <- terra::rast(matrix_weights, crs = "EPSG:4326")
+
+  # 5x5 sf object like
+  # |‾‾‾|‾‾‾‾|‾‾|
+  # |   |    |  |
+  # |   |----|  |
+  # |   |       |
+  # |___|_______|
+  rect_a <- matrix(c(0, 0, 2, 0, 2, 5, 0, 5, 0, 0), ncol = 2, byrow = TRUE)
+  coverage_a <- matrix(c(rep(1, 10), rep(0, 15)), ncol = 5, byrow = FALSE)
+  rect_b <- matrix(
+    c(2, 2.5, 4, 2.5, 4, 5, 2, 5, 2, 2.5),
+    ncol = 2,
+    byrow = TRUE
+  )
+  coverage_b <- matrix(
+    c(rep(0, 10), rep(c(1, 1, 0.5, 0, 0), 2), rep(0, 5)),
+    ncol = 5,
+    byrow = FALSE
+  )
+  rect_c <- matrix(
+    c(2, 0, 5, 0, 5, 5, 4, 5, 4, 2.5, 2, 2.5, 2, 0),
+    ncol = 2,
+    byrow = TRUE
+  )
+  coverage_c <- matrix(
+    c(rep(0, 10), rep(c(0, 0, 0.5, 1, 1), 2), rep(1, 5)),
+    ncol = 5,
+    byrow = FALSE
+  )
+  sf_column <- sf::st_sfc(
+    sf::st_polygon(list(rect_a)),
+    sf::st_polygon(list(rect_b)),
+    sf::st_polygon(list(rect_c))
+  )
+  sf_object <- sf::st_sf(
+    ID = c("A", "B", "C"),
+    geometry = sf_column,
+    crs = "EPSG:4326"
+  )
+
+  mean_center_from_coverage <- function(coverage) {
+    weights <- coverage * matrix_weights
+    idx_matrix <- as.matrix(expand.grid(
+      x = 1:nrow(weights),
+      y = 1:ncol(weights)
+    ))
+    pts_matrix <- as.matrix(expand.grid(
+      x = 1:nrow(weights),
+      y = ncol(weights):1
+    )) -
+      0.5
+
+    mean_center_matrix(
+      pts_matrix,
+      weights[idx_matrix[, 2:1]]
     )
-  )
+  }
 
-  concelhos_sf <- sf::st_read(
-    system.file(
-      'sao_miguel/concelhos.gpkg',
-      package = 'exactextractr'
-    ),
-    quiet = TRUE
-  )
-  concelhos_sf$grp <- 1:2
-
-  "grouped"
-  expect_equal(
-    nrow(mean_center(concelhos_sf, group = "grp", weight = pop_count_raster)),
-    2
-  )
+  ungrouped_center <- mean_center_from_coverage(matrix(rep(1, 25), ncol = 5))
+  colnames(ungrouped_center) <- c("X", "Y")
+  grouped_centers <- lapply(
+    list(coverage_a, coverage_b, coverage_c),
+    mean_center_from_coverage
+  ) |>
+    do.call(what = rbind)
+  colnames(grouped_centers) <- c("X", "Y")
 
   "ungrouped"
   expect_equal(
-    nrow(mean_center(concelhos_sf, weight = pop_count_raster)),
-    1
+    ungrouped_center,
+    mean_center(sf_object, weight = raster_weights) |>
+      sf::st_coordinates()
+  )
+
+  "grouped"
+  expect_equal(
+    grouped_centers,
+    mean_center(sf_object, group = "ID", weight = raster_weights) |>
+      sf::st_coordinates()
   )
 })
