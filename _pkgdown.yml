@@ -1,4 +1,9 @@
 url: https://ryanzomorrodi.github.io/centr/
 template:
   bootstrap: 5
+  bslib:
+    navbar-light-bg: "#861227"
+    navbar-dark-bg: "#861227"
+  light-switch: true
+
 
