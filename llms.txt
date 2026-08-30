@@ -5,6 +5,7 @@ A Package for Weighted and Unweighted Spatial Centers
 ## Installation
 
 ``` r
+
 # Install centr from CRAN
 install.packages("centr")
 
@@ -26,6 +27,7 @@ Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statisti
 tool.
 
 ``` r
+
 library(centr)
 df <- data.frame(
   lon = c(20, 50, 30, 80, 10),
@@ -59,6 +61,7 @@ Center](https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statisti
 tool.
 
 ``` r
+
 median_center(x, group = c("group1", "group2"), weight = "wt")
 #> Simple feature collection with 3 features and 2 fields
 #> Geometry type: POINT
@@ -79,6 +82,7 @@ expressions to `...` just as in
 [`dplyr::summarise()`](https://dplyr.tidyverse.org/reference/summarise.html).
 
 ``` r
+
 mean_center(
   x,
   group = c("group1", "group2"),
