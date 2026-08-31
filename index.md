@@ -96,9 +96,9 @@ mean_center(
 #> Geodetic CRS:  WGS 84
 #> # A tibble: 3 × 4
 #> # Groups:   group1 [2]
-#>   group1 group2            geometry total_weight
-#> * <chr>   <dbl>         <POINT [°]>        <dbl>
-#> 1 a           1 (24.88607 27.58952)            2
-#> 2 a           2             (10 30)            2
-#> 3 b           1 (65.92087 63.32603)            8
+#>   group1 group2 total_weight            geometry
+#> * <chr>   <dbl>        <dbl>         <POINT [°]>
+#> 1 a           1            2 (24.88607 27.58952)
+#> 2 a           2            2             (10 30)
+#> 3 b           1            8 (65.92087 63.32603)
 ```
