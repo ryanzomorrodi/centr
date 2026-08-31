@@ -39,7 +39,9 @@ median_center <- function(x, group, weight, ...) {
 
   if (!missing(group)) {
     check_character(group)
-    check_column_exists(x, group)
+    for (grp in group) {
+      check_column_exists(x, grp, column_name_arg = grp)
+    }
   } else {
     group <- dplyr::group_cols(data = x)
   }

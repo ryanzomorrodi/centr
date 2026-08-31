@@ -2,8 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -13,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# centr
+# centr <a href="https://ryanzomorrodi.github.io/centr/"><img src="man/figures/logo.png" align="right" height="120" alt="centr website" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/centr)](https://CRAN.R-project.org/package=centr)
